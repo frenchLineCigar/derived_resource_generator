@@ -1,0 +1,23 @@
+server:
+  port: 8022
+spring:
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://127.0.0.1:3308/derived_resource_generator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    #driver-class-name: com.mysql.cj.jdbc.Driver
+    #url: jdbc:mysql://127.0.0.1:3308/derived_resource_generator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull
+    username: drg
+    password: 123456A@
+mybatis:
+  type-aliases-package: com.example.drg.dto
+  #mapper-locations:
+  #- classpath:mybatis/mapper/*.xml
+logging:
+  config: classpath:logback-spring.xml
+  #level:
+    #com.example.drg.dao: debug
+custom:
+  fileDirPath: /2021/derived_resource_generator-file
+  logging:
+    dir: log
+    level: debug
