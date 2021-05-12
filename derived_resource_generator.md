@@ -1,5 +1,18 @@
 # TIL
 
+---
+
+[2021-05-13] 파일 다운로드 시, 고유한 파일명을 부여해 덮어쓰기 방지
+- 파일 다운로드 시, 파일명 중복으로 기존 파일이 덮어쓰기 되지 않도록 처리
+
+> 파일 저장 시, UUID를 통한 고유하고 랜덤한 파일명을 부여해, 기존 파일이 덮어쓰기 되는 경우를 방지한다.
+
+- [자바 파일이름 중복 방지](https://www.google.com/search?q=%EC%9E%90%EB%B0%94+%ED%8C%8C%EC%9D%BC%EC%9D%B4%EB%A6%84+%EC%A4%91%EB%B3%B5+%EB%B0%A9%EC%A7%80+%ED%8C%A8%ED%84%B4&oq=%EC%9E%90%EB%B0%94+%ED%8C%8C%EC%9D%BC%EC%9D%B4%EB%A6%84+%EC%A4%91%EB%B3%B5+%EB%B0%A9%EC%A7%80+%ED%8C%A8%ED%84%B4&aqs=chrome.0.69i59j0i333.689j0j9&sourceid=chrome&ie=UTF-8)
+  - [UUID로 파일 이름 중복 방지하기](https://enai.tistory.com/38)
+  - [Kakao DB Team: MySQL 서버에서 UUID 활용](https://small-dbtalk.blogspot.com/2014/12/)
+
+---
+
 [2021-05-12] 쿼리 스트링으로 넘어온 URL의 파일 다운로드
 
 - 자바 HTTP 파일 다운로드

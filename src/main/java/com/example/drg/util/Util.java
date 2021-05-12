@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.UUID;
 
 @Slf4j
 public class Util {
@@ -21,7 +22,14 @@ public class Util {
 		Downloader for use : Using Java NIO
 	 */
 	public static String downloadFileByHttp(String fileUrl, String outputDir) {
-		String filePath = outputDir + "/" + getFileNameFromUrl(fileUrl);
+		String originFileName = getFileNameFromUrl(fileUrl);
+		String tempFileName = UUID.randomUUID() + "." + getFileExt(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
+		String filePath = outputDir + "/" + tempFileName;
+
+		log.info("originFileName = " + originFileName);
+		log.info("tempFileName = " + tempFileName);
+		log.info("filePath = " + filePath);
+
 		try (FileOutputStream fileOutputStream = new FileOutputStream(filePath)) {
 			ReadableByteChannel readableByteChannel = Channels.newChannel(new URL(fileUrl).openStream());
 			FileChannel fileChannel = fileOutputStream.getChannel();
@@ -34,6 +42,7 @@ public class Util {
 		return filePath;
 	}
 
+	// URL에서 파일명 추출
 	private static String getFileNameFromUrl(String fileUrl) {
 		try {
 			return Paths.get(new URI(fileUrl).getPath()).getFileName().toString();
@@ -43,24 +52,38 @@ public class Util {
 		}
 	}
 
+	// 파일명에서 확장자 추출
+	private static String getFileExt(String fileName) {
+		int pos = fileName.lastIndexOf(".");
+		String ext = fileName.substring(pos + 1);
+
+		return ext;
+	}
+
 	/*
 		Downloader v2 : Using Java IO
 	 */
 	public static String downloadFileByHttpV2(String fileUrl, String outputDir) {
-		String destFilePath = outputDir + "/" + getFileNameFromUrlV2(fileUrl);
-		// String destFilePath = new File(outputDir, getFileNameFromUrlV2(fileUrl)).getPath();
-		// String destFilePath = Paths.get(outputDir, getFileNameFromUrlV2(fileUrl)).toString();
-		// String destFilePath = outputDir + File.separatorChar + getFileNameFromUrlV2(fileUrl);
+		String originFileName = getFileNameFromUrlV2(fileUrl);
+		String tempFileName = UUID.randomUUID() + "." + getFileExt(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
+		String filePath = outputDir + "/" + tempFileName;
+		// String filePath = new File(outputDir, tempFileName).getPath();
+		// String filePath = Paths.get(outputDir, tempFileName).toString();
+		// String filePath = outputDir + File.separatorChar + tempFileName;
+
+		log.info("originFileName = " + originFileName);
+		log.info("tempFileName = " + tempFileName);
+		log.info("filePath = " + filePath);
 
 		InputStream in;
 		try {
 			in = new URL(fileUrl).openStream();
-			Files.copy(in, Paths.get(destFilePath), StandardCopyOption.REPLACE_EXISTING); //덮어쓰기 옵션
+			Files.copy(in, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING); //덮어쓰기 옵션
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		return destFilePath;
+		return filePath;
 	}
 
 	private static String getFileNameFromUrlV2(String fileUrl) {
@@ -68,6 +91,9 @@ public class Util {
 		String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1); // 마지막 / 가 나오는 다음부터가 파일명
 		return fileName;
 	}
+
+
+
 
 	/*private static String getFileNameFromUrl_EX(String fileUrl) {
 		// 반반 치킨 코드
@@ -91,6 +117,9 @@ public class Util {
 			return "";
 		}
 	}*/
+
+
+
 
 
 	/*
@@ -117,7 +146,7 @@ public class Util {
 			// Status 가 200 일 때
 			if (responseCode == HttpURLConnection.HTTP_OK) {
 				// Content-Disposition or URL 에서 파일명 가져오기
-				String fileName = "";
+				String originFileName = "";
 				String disposition = conn.getHeaderField(HttpHeaders.CONTENT_DISPOSITION);
 				String contentType = conn.getContentType();
 
@@ -127,30 +156,24 @@ public class Util {
 					String target = "filename=";
 					int index = disposition.indexOf(target);
 					if (index != -1) {
-						fileName = disposition.substring(index + target.length()); // "152-536x354.jpg"
-						fileName = fileName.replaceAll("\"", ""); // 152-536x354.jpg (앞뒤 따옴표 제거)
+						originFileName = disposition.substring(index + target.length()); // "152-536x354.jpg"
+						originFileName = originFileName.replaceAll("\"", ""); // 152-536x354.jpg (앞뒤 따옴표 제거)
 					}
 				} else {
-					fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
+					originFileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
 				}
+
+				String tempFileName = UUID.randomUUID() + "." + getFileExt(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
+				File file = new File(outputDir, tempFileName);
+				filePath = file.getPath();
 
 				log.info("Content-Type = " + contentType);
 				log.info("Content-Disposition = " + disposition);
-				log.info("fileName = " + fileName);
-
-				// InputStream ➡️ FileOutputStream 을 통해 파일 다운로드
-
-				// 경로가 생성되지 않았다면 해당 경로를 생성
-				//File fileDir = new File(outputDir);
-				//if (! fileDir.exists()) {
-				//	fileDir.mkdirs();
-				//}
-				// filePath = outputDir + File.separatorChar + fileName;
-
-				File file = new File(outputDir, fileName);
-				filePath = file.getPath();
+				log.info("originFileName = " + originFileName);
+				log.info("tempFileName = " + tempFileName);
 				log.info("filePath = " + filePath);
 
+				// InputStream ➡️ FileOutputStream 을 통해 파일 다운로드
 				is = conn.getInputStream();
 				os = new FileOutputStream(file);
 
@@ -181,7 +204,6 @@ public class Util {
 				if (is != null) is.close();
 				if (os != null) os.close();
 				if (conn != null) conn.disconnect();
-				System.out.println("자원종료");
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
