@@ -17,7 +17,8 @@ logging:
   #level:
     #com.example.drg.dao: debug
 custom:
-  fileDirPath: /2021/derived_resource_generator-file
+  genFileDirPath: /2021/derived_resource_generator-file
+  tmpDirPath: ${custom.genFileDirPath}/tmp
   logging:
     dir: log
-    level: debug
+    level: info
