@@ -1,5 +1,45 @@
 # TIL
 
+
+---
+
+[2021-05-13] 
+   
+ - MySQL
+   - MySQL 8 Invisible/Visible Index
+     - [mysql8 VISIBLE - Google 검색](https://www.google.com/search?q=mysql8+VISIBLE&oq=mysql8+VISIBLE&aqs=chrome..69i57j0i13l7j0i13i30l2.1798j1j7&sourceid=chrome&ie=UTF-8)
+     - [MySQL 8.0 - Invisible Index](http://minsql.com/mysql8/B-3-A-invisibleIndex/)
+     - [[이렇게 사용하세요!] MySQL 8.0, 개발자를 위한 신규 기능 살펴보기! #3 Indexes](https://medium.com/naver-cloud-platform/%EC%9D%B4%EB%A0%87%EA%B2%8C-%EC%82%AC%EC%9A%A9%ED%95%98%EC%84%B8%EC%9A%94-mysql-8-0-%EA%B0%9C%EB%B0%9C%EC%9E%90%EB%A5%BC-%EC%9C%84%ED%95%9C-%EC%8B%A0%EA%B7%9C-%EA%B8%B0%EB%8A%A5-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-3-indexes-e32249e2dae5)
+     - [MySQL 8.0 새기능 : 네이버 블로그](https://m.blog.naver.com/PostView.nhn?blogId=theswice&logNo=221321015924&proxyReferer=https:%2F%2Fwww.google.com%2F)
+   - [Integer display width is deprecated and will be removed in a future release. - Google 검색](https://www.google.com/search?q=Integer+display+width+is+deprecated+and+will+be+removed+in+a+future+release.&oq=Integer+display+width+is+deprecated+and+will+be+removed+in+a+future+release.&aqs=chrome.0.69i59j0i30l2j0i5i30l3.463j0j7&sourceid=chrome&ie=UTF-8)
+     - [MYSQL - Warning: #1681 Integer display width is deprecated - Stack Overflow](https://stackoverflow.com/questions/58938358/mysql-warning-1681-integer-display-width-is-deprecated)
+     - [코드루덴스 :: MySQL DB 복원시 경고 메시지 해결 방법](https://blog.codens.info/1879)
+     - [[MySQL] 03. Table, 테이블 구조 및 생성 :: IT개발이야기](https://devkevin0408.tistory.com/11)
+   - [MySQL 테이블명 대소문자 구분 - Google 검색](https://www.google.com/search?q=sql+%ED%85%8C%EC%9D%B4%EB%B8%94%EB%AA%85+%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90+%EA%B5%AC%EB%B6%84&oq=sql+%ED%85%8C%EC%9D%B4%EB%B8%94%EB%AA%85+%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90+%EA%B5%AC%EB%B6%84&aqs=chrome..69i57j0i333l4j69i60.408j0j9&sourceid=chrome&ie=UTF-8)
+     - [Happy Resource :: MySQL 테이블명 대소문자 구분](https://bizadmin.tistory.com/entry/MySQL-%ED%85%8C%EC%9D%B4%EB%B8%94%EB%AA%85-%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90-%EA%B5%AC%EB%B6%84)
+     - [Happy Resource :: MySQL 테이블 이름 lower_case_table_names 대소문자 변경](https://bizadmin.tistory.com/entry/mysql-%ED%85%8C%EC%9D%B4%EB%B8%94-%EC%9D%B4%EB%A6%84-%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90-%EB%B3%80%EA%B2%BD)
+     - [MySQL 대소문자 구분 안하기 - lower_case_table_names 변경 :: 야근싫어하는 개발자](https://roqkffhwk.tistory.com/91)
+     - [MySQL 테이블 및 데이타베이스 이름 대소문자 구분 설정](https://www.lesstif.com/dbms/mysql-14745775.html)
+     - [DB명 Table명 대소문자 구분 처리하기 (대소문자 구분 OS에서만 가능)](https://blog.edit.kr/entry/DB%EB%AA%85-Table%EB%AA%85-%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90-%EA%B5%AC%EB%B6%84-%EC%B2%98%EB%A6%AC%ED%95%98%EA%B8%B0-%EB%8C%80%EC%86%8C%EB%AC%B8%EC%9E%90-%EA%B5%AC%EB%B6%84-OS%EC%97%90%EC%84%9C%EB%A7%8C-%EA%B0%80%EB%8A%A5)
+
+
+ - [java request current url - Google 검색](https://www.google.com/search?q=java+request+current+url&oq=java+request+current+url&aqs=chrome..69i57j0i8i30l7.4756j0j7&sourceid=chrome&ie=UTF-8)
+   - **[Get full URL and query string in Servlet for both HTTP and HTTPS requests - Stack Overflow](https://stackoverflow.com/questions/16675191/get-full-url-and-query-string-in-servlet-for-both-http-and-https-requests)**
+   - [How to get the full url from HttpServletRequest? - Stack Overflow](https://stackoverflow.com/questions/23692914/how-to-get-the-full-url-from-httpservletrequest)
+   - [HttpServletRequest to complete URL - Stack Overflow](https://stackoverflow.com/questions/2222238/httpservletrequest-to-complete-url)
+   - [How to get Request URL in Spring Boot - Stack Overflow](https://stackoverflow.com/questions/52842979/how-to-get-request-url-in-spring-boot)
+   - [Get Root/Base Url In Spring MVC - Stack Overflow](https://stackoverflow.com/questions/5012525/get-root-base-url-in-spring-mvc)
+   - [What's the best way to get the current URL in Spring MVC? - Stack Overflow](https://stackoverflow.com/questions/1490821/whats-the-best-way-to-get-the-current-url-in-spring-mvc)
+   - [[JAVA] java 에서 현재 URL 가져오기](https://heung-9.tistory.com/3)
+   - [[java] 현재 페이지의 url 주소 가져오기](https://dlevelb.tistory.com/576)
+   - [HttpServletRequest 함수를 사용한 요청 URL 취득](https://hihoyeho.tistory.com/entry/HttpServletRequest-%ED%95%A8%EC%88%98%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EC%9A%94%EC%B2%AD-URL-%EC%B7%A8%EB%93%9D)
+   - [Spring에서 호출 URL 찾는 방법](https://jang8584.tistory.com/86)
+   - [Spring MVC request URL 가져오기](https://dogcowking.tistory.com/83)
+   - [[Spring/JAVA] 사용자 IP, 접속자IP, 클라이언트IP 주소 가져오기](https://bbo-blog.tistory.com/17)
+   - [Spring 전체 URL 가져오기](https://hailey0.tistory.com/24)
+   
+     
+     
 ---
 
 [2021-05-13] 파일 다운로드 시, 고유한 파일명을 부여해 덮어쓰기 방지

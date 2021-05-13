@@ -3,6 +3,7 @@ package com.example.drg.util;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -293,6 +294,23 @@ public class Util {
 		}
 	}
 
+	public static String getUrlFromHttpServletRequest(HttpServletRequest req) {
+		return req.getRequestURI() + "?" + req.getQueryString();
+	}
+
+	/* Full URL  */
+	/*public static String getUrlFromHttpServletRequest(HttpServletRequest req) {
+		String url =
+				req.getScheme() + "://" +	// "http" + "://
+						req.getServerName() +		// "myhost"
+						":" + 						// ":"
+						req.getServerPort() +		// "8080"
+						req.getRequestURI() +		// "/people"
+						"?" + 						// "?"
+						req.getQueryString(); 		// "lastname=Fox&age=30"
+
+		return url;
+	}*/
 
 	/*
 		Downloader for use : Using Java NIO

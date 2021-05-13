@@ -38,3 +38,16 @@ CREATE TABLE genFile (
 	PRIMARY KEY (id),
 	KEY relId (relId,relTypeCode,typeCode,type2Code,fileNo) # 인덱스 지정해 풀스캔 방지
 );
+
+# originUrl 인덱스를 일반 인덱스로 수정
+ALTER TABLE derivedRequest DROP INDEX originUrl, ADD KEY originUrl (originUrl ASC) VISIBLE;
+
+# [참고 사항]
+# url : /img?url=https://cdn.worldvectorlogo.com/logos/lorem-lorem-1.svg
+# -> originUrl : https://cdn.worldvectorlogo.com/logos/lorem-lorem-1.svg
+# 다음과 같이 원본파일 url(originUrl)이 같더라도 width, height, maxWidth 등과 조합되어 다른 케이스로 올 수 있다.
+# Case 1) /img?url=https://cdn.worldvectorlogo.com/logos/lorem-lorem-1.svg
+# Case 2) /img?width=200&url=https://cdn.worldvectorlogo.com/logos/lorem-lorem-1.svg
+# -> 위 2가지 Case는 서로 다른 요청이지만 같은 파일을 저장하게 된다.
+# 그러나 https://cdn.worldvectorlogo.com/logos/lorem-lorem-1.svg 란 url의 원본 파일을 이미 가지고 있다면
+# 파일을 새로 저장하지 않고, 이미 저장된 파일을 참조하도록 처리하기 위해 originUrl 칼럼을 일반 인덱스로 변경한다.

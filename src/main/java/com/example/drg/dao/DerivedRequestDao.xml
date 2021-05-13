@@ -11,10 +11,10 @@
 			regDate = NOW(),
 			updateDate = NOW(),
 			url = #{url},
-			originUrl = #{url},
-			width = #{width},
-			height = #{height},
-			maxWidth = #{maxWidth}
+			originUrl = #{originUrl},
+		    width = #{width},
+		    height = #{height},
+		    maxWidth = #{maxWidth}
 	</insert>
 
 	<select id="findDerivedRequestByUrl" resultType="DerivedRequest">
