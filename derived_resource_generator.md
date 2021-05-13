@@ -8,9 +8,48 @@
 > 파일 저장 시, UUID를 통한 고유하고 랜덤한 파일명을 부여해, 기존 파일이 덮어쓰기 되는 경우를 방지한다.
 
 - [자바 파일이름 중복 방지](https://www.google.com/search?q=%EC%9E%90%EB%B0%94+%ED%8C%8C%EC%9D%BC%EC%9D%B4%EB%A6%84+%EC%A4%91%EB%B3%B5+%EB%B0%A9%EC%A7%80+%ED%8C%A8%ED%84%B4&oq=%EC%9E%90%EB%B0%94+%ED%8C%8C%EC%9D%BC%EC%9D%B4%EB%A6%84+%EC%A4%91%EB%B3%B5+%EB%B0%A9%EC%A7%80+%ED%8C%A8%ED%84%B4&aqs=chrome.0.69i59j0i333.689j0j9&sourceid=chrome&ie=UTF-8)
+  - [Java.util.UUID Class - Tutorialspoint](https://www.tutorialspoint.com/java/util/java_util_uuid.htm)
   - [UUID로 파일 이름 중복 방지하기](https://enai.tistory.com/38)
   - [Kakao DB Team: MySQL 서버에서 UUID 활용](https://small-dbtalk.blogspot.com/2014/12/)
+  - [UUID.fromString 예제](https://www.google.com/search?q=UUID.fromString+%EC%98%88%EC%A0%9C&oq=UUID.fromString+%EC%98%88%EC%A0%9C&aqs=chrome..69i57j0i333l3.3432j0j7&sourceid=chrome&ie=UTF-8)
+  - [Java에서 UUID 클래스를 사용하여 유일한 식별자 생성하기](https://offbyone.tistory.com/303)
+  - [Java에서 GUID 만들기](https://www.delftstack.com/ko/howto/java/create-a-guid-in-java/)
 
+
+> 파일 I/O 관련된 다양한 연습 : Using Java IO / Java NIO / Library
+
+- java.nio.file.Files 내 유틸 메서드 활용 익숙해지기
+  - [DoDo's BLOG :: Files](https://dodocap.tistory.com/entry/Files)
+  
+
+- [java delete file - Google 검색](https://www.google.com/search?q=java+delete+file&oq=java+delete+file&aqs=chrome..69i57j69i59l2j0l3j69i60l2.318j0j9&sourceid=chrome&ie=UTF-8)
+  - [Delete a file using Java - GeeksforGeeks](https://www.geeksforgeeks.org/delete-file-using-java/)
+  - [How to Delete a File in Java - Javatpoint](https://www.javatpoint.com/how-to-delete-a-file-in-java)
+  
+ 
+- [java file get size - Google 검색](https://www.google.com/search?q=java+file+get+size&oq=java+file+get+size&aqs=chrome.0.0l7j69i60.6626j1j7&sourceid=chrome&ie=UTF-8)
+  - [Java File 사이즈 (파일크기,용량)](https://leewon.tistory.com/132)
+
+
+- [java file move - Google 검색](https://www.google.com/search?q=java+file+move&oq=java+file+move&aqs=chrome..69i57j0l5j0i30l4.3623j0j7&sourceid=chrome&ie=UTF-8)
+- [java file 이동 - Google 검색](https://www.google.com/search?q=java+file+%EC%9D%B4%EB%8F%99&oq=java+file+%EC%9D%B4%EB%8F%99&aqs=chrome..69i57j0l2j69i60j69i65l2j69i61j69i60.3201j1j7&sourceid=chrome&ie=UTF-8)
+  - [Rename or Move a File in Java](https://www.baeldung.com/java-how-to-rename-or-move-a-file)
+  - [java, 파일 rename, move 하는법](https://pandorica.tistory.com/38)
+  - [(Java) 파일(File) 이동(Move) 기능 구현방법](https://jinseongsoft.tistory.com/20)
+  - [Java - 파일 rename, move 하는 방법](https://codechacha.com/ko/java-rename-or-move-file/)
+
+
+- [java file copy - Google 검색](https://www.google.com/search?q=java+file+copy&oq=java+file+copy&aqs=chrome..69i57j0l9.9801j1j9&sourceid=chrome&ie=UTF-8)
+  - [How to Copy a File with Java](https://www.baeldung.com/java-copy-file)
+  - [Creator Developer :: 자바 IO&NIO 파일복사 (FileCopy) 방법](https://creatordev.tistory.com/72)
+  - [Java NIO (Files & Path) 로 파일 복사하기 · 슷호브 New 훌로구](https://stove99.github.io/java/2019/08/16/java-nio-file-copy/)
+
+
+- [get directory directly above from File java - Google 검색](https://www.google.com/search?q=get+Directory+directly+above+from+File+java&oq=get+Directory+directly+above+from+File+java&aqs=chrome..69i57j69i64.6832j1j9&sourceid=chrome&ie=UTF-8)
+  - [How to get just the parent directory name of a specific file - Stack Overflow](https://stackoverflow.com/questions/8197049/how-to-get-just-the-parent-directory-name-of-a-specific-file)
+  - [Java Examples - Parent Directory - Tutorialspoint](https://www.tutorialspoint.com/javaexamples/dir_parent.htm)
+  
+  
 ---
 
 [2021-05-12] 쿼리 스트링으로 넘어온 URL의 파일 다운로드

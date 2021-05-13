@@ -16,18 +16,31 @@ class MyApplicationListener implements ApplicationListener<ApplicationReadyEvent
 
 	@Value("${custom.genFileDirPath}")
 	private String genFileDirPath;
-	
+
 	@Value("${custom.tmpDirPath}")
 	private String tmpDirPath;
 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
-		log.info("ApplicationListener.onApplicationEvent");
+		log.info("MyApplicationListener.onApplicationEvent");
+		initDir();
+	}
+
+	private void initDir() {
+		log.info("MyApplicationListener.initDir");
 		log.info("genFileDirPath = " + genFileDirPath);
 		log.info("tmpDirPath = " + tmpDirPath);
 
-		new File(genFileDirPath).mkdirs();
-		new File(tmpDirPath).mkdirs();
+		File genFileDir = new File(genFileDirPath);
+		File tmpDir = new File(tmpDirPath);
+
+		if (! genFileDir.exists()) {
+			genFileDir.mkdirs();
+		}
+
+		if (! tmpDir.exists()) {
+			tmpDir.mkdirs();
+		}
 	}
 
 }

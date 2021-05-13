@@ -3,9 +3,9 @@ server:
 spring:
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-    url: jdbc:log4jdbc:mysql://127.0.0.1:3308/derived_resource_generator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+    url: jdbc:log4jdbc:mysql://127.0.0.1:3308/derived_resources?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
     #driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://127.0.0.1:3308/derived_resource_generator?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull
+    #url: jdbc:mysql://127.0.0.1:3308/derived_resources?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull
     username: drg
     password: 123456A@
 mybatis:

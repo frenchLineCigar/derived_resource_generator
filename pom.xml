@@ -93,6 +93,15 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<!-- 아래 디렉터리 하위의 MyBatis Mapper XML 파일 빌드 포함 -->
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.xml</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 
 </project>
