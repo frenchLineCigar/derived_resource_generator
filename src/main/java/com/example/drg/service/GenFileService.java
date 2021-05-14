@@ -31,6 +31,10 @@ public class GenFileService {
 		return fileDao.findGenFileById(id);
 	}
 
+	public GenFile getGenFile(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo) {
+		return fileDao.findGenFile(relTypeCode, relId, typeCode, type2Code, fileNo);
+	}
+
 	// Using Java NIO
 	public ResultData save(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo, String originFileName, String downloadedFilePath) {
 

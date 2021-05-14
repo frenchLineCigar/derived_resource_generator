@@ -1,6 +1,7 @@
 package com.example.drg.service;
 
 import com.example.drg.dao.DerivedRequestDao;
+import com.example.drg.dto.GenFile;
 import com.example.drg.dto.DerivedRequest;
 import com.example.drg.util.Util;
 import lombok.RequiredArgsConstructor;
@@ -33,5 +34,9 @@ public class DerivedRequestService {
 
         // 파일 저장
         fileService.save("derivedRequest", newDerivedRequestId, "common", "origin", 1, originFileName, downloadedFilePath);
+    }
+
+    public GenFile getOriginGenFile(DerivedRequest derivedRequest) {
+        return fileService.getGenFile("derivedRequest", derivedRequest.getId(), "common", "origin", 1);
     }
 }
