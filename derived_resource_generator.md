@@ -3,7 +3,69 @@
 
 ---
 
-[2021-05-13] 
+[2021-05-14] 클라이언트 캐시 기능 구현
+ 
+ - HTTP/WEB
+   - [HTTP caching - HTTP](https://developer.mozilla.org/ko/docs/Web/HTTP/Caching)
+   - [Cache-Control - HTTP](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Cache-Control)
+     - [HTTP 완벽 가이드 (7) 캐시](https://velog.io/@akh9804/HTTP-%EC%99%84%EB%B2%BD-%EA%B0%80%EC%9D%B4%EB%93%9C-7-%EC%BA%90%EC%8B%9C)
+     - [HTTP 완벽가이드 스터디 #7 Cache](https://brainbackdoor.tistory.com/129?category=711396)
+     - [HTTP 완벽 가이드 요약본 : 7장 캐시](https://goodgid.github.io/HTTP-Summary-7/)
+     - [7장 캐시](http://tlog.tammolo.com/blog/7-bbf51489-a113-40df-b64b-bea148785017/)
+   - [Keep-Alive - HTTP](https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Keep-Alive)
+     - [[Web]서버와의 연결을 계속? Keep Alive! :: Kamang's IT Blog](https://kamang-it.tistory.com/entry/Web%EC%84%9C%EB%B2%84%EC%99%80%EC%9D%98-%EC%97%B0%EA%B2%B0%EC%9D%84-%EA%B3%84%EC%86%8D-Keep-Alive)
+     - [HTTP 와 TCP의 Keep-Alive](https://jw910911.tistory.com/35)
+     - [HTTP 완벽가이드 스터디 #4 -d Keep-Alive](https://brainbackdoor.tistory.com/127)
+ 
+ - HTTP 통신과 관련된 개념은 검색 시, "HTTP 완벽 가이드 + "알고 싶은 Keyword" 식으로 검색하면 필요한 내용만 고퀄리티로 빠르게 참고할 수 있다.
+   - [HTTP 완벽가이드 Cache - Google 검색](https://www.google.com/search?q=HTTP+%EC%99%84%EB%B2%BD%EA%B0%80%EC%9D%B4%EB%93%9C+Cache&ei=FG-eYJezBpH30ASu2Y7ACA&oq=HTTP+%EC%99%84%EB%B2%BD%EA%B0%80%EC%9D%B4%EB%93%9C+Cache&gs_lcp=Cgdnd3Mtd2l6EAMyCAgAELADEM0CULUPWLUPYKUQaAJwAHgAgAFqiAFqkgEDMC4xmAEAoAEBqgEHZ3dzLXdpesgBAcABAQ&sclient=gws-wiz&ved=0ahUKEwiXjbKTmMnwAhWRO5QKHa6sA4gQ4dUDCA4&uact=5) 
+   - [HTTP 완벽가이드 스터디 Cache - Google 검색](https://www.google.com/search?q=HTTP+%EC%99%84%EB%B2%BD%EA%B0%80%EC%9D%B4%EB%93%9C+%EC%8A%A4%ED%84%B0%EB%94%94+Cache&ei=DG-eYJqoHu-Lr7wP-4e18AM&oq=HTTP+%EC%99%84%EB%B2%BD%EA%B0%80%EC%9D%B4%EB%93%9C+%EC%8A%A4%ED%84%B0%EB%94%94+Cache&gs_lcp=Cgdnd3Mtd2l6EAMyBQgAEM0CSgUIExIBMVDZKVi6LWD0NWgCcAB4AIABdYgByAOSAQMwLjSYAQCgAQGqAQdnd3Mtd2l6wAEB&sclient=gws-wiz&ved=0ahUKEwia3uGPmMnwAhXvxYsBHftDDT4Q4dUDCA4&uact=5)
+
+>Cache는 성능 향상을 위해 사용한다.
+>
+>웹 사이트를 개발하는 데에 있어서 적용할 수 있는 캐시에는
+>브라우저 캐시와 서버단에서의 캐시가 있다. 
+>
+>**`브라우저 캐시`**
+>
+>이미 받아왔던 자원들은 캐시에 저장해둔다.
+>일정 기간동안 같은 리소스 요청은 캐시에 있는 내용을 쓰게 됨으로써 서버와의 통신에 따른 비용을 줄일 수 있다.
+>
+>**`서버 캐시`**
+>
+>DB 조회 비용을 줄이기 위해 주로 사용한다.
+>자주 변경되지 않는 데이터는 캐싱하여 DB 통신 비용을 줄일 수 있다.
+>
+>쇼핑몰을 예로 들면, 브라우저를 새로 로드할 때마다 상품 리스트를 보내줘야 하는 경우가 있을 것이다.
+>만약 상품이 1억개가 있다면, 상품 리스트를 조회하는 것만으로도 비용이 어마어마 할 것이다.
+>이럴 때 서버단에 캐시를 두어 일정 기간동안에 들어오는 요청에 한해서는 캐시에 있는 내용을 보내주는 것이다.
+>그러면 DB 조회 비용을 줄일 수 있다.
+>
+>이렇게 성능을 개선하기 위해 적용하는 것이 캐시이고,
+>Spring 에서는 경량의 빠른 캐시엔진인 Ehcache 을 비롯해 JCache, Redis, Ehcache 등 여러 캐시 종류가 있다.
+
+
+ - 캐시 적용을 왜 해야 하는 거지? :  클라이언트 캐시와 서버 캐시
+   - [(HTTP) 알아둬야 할 HTTP 쿠키 & 캐시 헤더 - ZeroCho Blog](https://www.zerocho.com/category/HTTP/post/5b594dd3c06fa2001b89feb9)
+   - [[Spring] Ehcache 캐시 사용](https://hyeooona825.tistory.com/86)
+   - [Cache](https://kkwonsy.tistory.com/16) : Ehcache, Memcached, Redis 비교
+   
+   
+ - [ResponseEntity.ok() header cache-control - Google 검색](https://www.google.com/search?q=ResponseEntity.ok()+header+cache-control&oq=ResponseEntity.ok()+header+cache-control&aqs=chrome.0.69i59.335j0j9&sourceid=chrome&ie=UTF-8)
+   - [Java + Spring Boot: I am trying to add CacheControl header to ResponseEntity - Stack Overflow](https://stackoverflow.com/questions/38131725/java-spring-boot-i-am-trying-to-add-cachecontrol-header-to-responseentity)
+   - [java - Java + Spring Boot : CacheEntity 헤더를 ResponseEntity에 추가하려고합니다. - IT 툴 넷](https://pythonq.com/so/java/629440)
+   - [Cache Headers in Spring MVC](https://www.baeldung.com/spring-mvc-cache-headers)
+   - [logicbig :: Spring MVC - How to set 'Cache-Control' header?](https://www.logicbig.com/tutorials/spring-framework/spring-web-mvc/cache-control.html) : Spring MVC - Cache-Control support
+   - [logicbig :: Spring MVC - CacheControl Examples](https://www.logicbig.com/how-to/code-snippets/jcode-spring-mvc-cachecontrol.html)
+   - [Java Code Examples for org.springframework.http.CacheControl](https://www.programcreek.com/java-api-examples/?api=org.springframework.http.CacheControl)
+   - [[Web on Reactive Stack] 1. 스프링 웹플럭스: 1.10. HTTP Caching](https://madplay.github.io/post/spring-webflux-references-http-caching)
+   - [ResponseEntity, String to JSON :: 사월은 봄이다.](https://napsis.tistory.com/266)
+   - [Spring Security - Cache Control Headers](https://www.baeldung.com/spring-security-cache-control-headers)
+   - [ResponseEntity 캐싱 - Google 검색](https://www.google.com/search?q=ResponseEntity+%EC%BA%90%EC%8B%B1&oq=ResponseEntity+%EC%BA%90%EC%8B%B1&aqs=chrome..69i57j0l5j69i60l2.1041j0j9&sourceid=chrome&ie=UTF-8)
+
+---
+
+[2021-05-13]  요청 URL 정보를 관리해 신규 URL일 경우만 파일 저장 / originUrl 칼럼을 일반 인덱스로 변경
    
  - MySQL
    - MySQL 8 Invisible/Visible Index
