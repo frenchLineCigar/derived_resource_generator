@@ -23,20 +23,7 @@ class MyApplicationListener implements ApplicationListener<ApplicationReadyEvent
 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
-		initDir();
-	}
-
-	private void initDir() {
-		File genFileDir = new File(genFileDirPath);
-		File tmpDir = new File(tmpDirPath);
-
-		if (! genFileDir.exists()) {
-			genFileDir.mkdirs();
-		}
-
-		if (! tmpDir.exists()) {
-			tmpDir.mkdirs();
-		}
+		log.info("MyApplicationListener.onApplicationEvent");
 
 		App.init(genFileDirPath, tmpDirPath);
 	}

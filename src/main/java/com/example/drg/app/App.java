@@ -2,15 +2,25 @@ package com.example.drg.app;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
+
 @Slf4j
 public class App {
 
-	private static String genFileDirPath;
-	private static String tmpDirPath;
+	public static String genFileDirPath;
+	public static String tmpDirPath;
 
 	public static void init(String genFileDirPath, String tmpDirPath) {
 		App.genFileDirPath = genFileDirPath;
 		App.tmpDirPath = tmpDirPath;
+		App.createDir();
+	}
+
+	public static void createDir() {
+		File genFileDir = new File(genFileDirPath);
+		File tmpDir = new File(tmpDirPath);
+		if (! genFileDir.exists()) genFileDir.mkdirs();
+		if (! tmpDir.exists()) tmpDir.mkdirs();
 	}
 
 	public static String getGenFileDirPath() {
