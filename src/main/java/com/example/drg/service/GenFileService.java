@@ -1,12 +1,12 @@
 package com.example.drg.service;
 
+import com.example.drg.app.App;
 import com.example.drg.dao.GenFileDao;
 import com.example.drg.dto.GenFile;
 import com.example.drg.dto.ResultData;
 import com.example.drg.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,9 +20,6 @@ public class GenFileService {
 
 	private final GenFileDao fileDao;
 
-	@Value("${custom.genFileDirPath}")
-	private String genFileDirPath;
-
 	public void saveMeta(GenFile file) {
 		fileDao.saveMeta(file);
 	}
@@ -35,14 +32,14 @@ public class GenFileService {
 		return fileDao.findGenFile(relTypeCode, relId, typeCode, type2Code, fileNo);
 	}
 
-	// Using Java NIO
-	public ResultData save(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo, String originFileName, String downloadedFilePath) {
+	// 파일 저장 (Using Java NIO)
+	public ResultData save(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo, String originFileName, String filePath) {
 
 		// 파일 메타정보 생성
 		String fileExtTypeCode = Util.getFileExtTypeCodeFromFileName(originFileName);
 		String fileExtType2Code = Util.getFileExtType2CodeFromFileName(originFileName);
 		String fileExt = Util.getFileExtFromFileName(originFileName);
-		int fileSize = Util.getFileSize(downloadedFilePath);
+		int fileSize = Util.getFileSize(filePath);
 		String fileDir = Util.getNowYearMonthDateStr();
 
 		GenFile genFile = GenFile.create(relTypeCode, relId, typeCode, type2Code, fileNo, fileSize, originFileName, fileExtTypeCode, fileExtType2Code, fileExt, fileDir);
@@ -50,19 +47,22 @@ public class GenFileService {
 		// 파일 메타정보 DB에 저장
 		saveMeta(genFile);
 
-		int newGenFileId = genFile.getId(); //생성된 PK
-		String fileName = newGenFileId + "." + fileExt; // 파일명
-		String destFilePath = genFileDirPath + "/" + relTypeCode + "/" + fileDir + "/" + fileName; // 파일경로
+		int newGenFileId = genFile.getId();
+		String destFilePath = genFile.getFilePath();
 
-		// 실제 파일 저장
-		Util.moveFile(downloadedFilePath, destFilePath); // 다운로드한 파일을 정식경로(destFilePath)로 이동시킨다
+		// 파일 저장
+		saveOnDisk(filePath, destFilePath);
 
 		return new ResultData("S-1", "성공하였습니다.", "id", newGenFileId);
 	}
 
+	public void saveOnDisk(String filePath, String destFilePath) {
+		Util.moveFile(filePath, destFilePath); // 다운로드한 파일을 정식경로(destFilePath)로 이동
+	}
 
-	// Using ONLY Java IO
-	/*public ResultData saveV1(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo, String originFileName, String tempFilePath) {
+
+	// 파일 저장 (Using ONLY Java IO)
+	public ResultData saveV1(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo, String originFileName, String tempFilePath) {
 
 		// 1. 파일 메타 정보 DB에 저장
 		String fileExtTypeCode = Util.getFileExtTypeCodeFromFileName(originFileName);
@@ -77,7 +77,7 @@ public class GenFileService {
 
 		// 2. 실제 파일 저장
 		String fileName = newGenFileId + "." + fileExt; // 파일명
-		String destFileDirPath = genFileDirPath + "/" + relTypeCode + "/" + fileDir; // 저장경로
+		String destFileDirPath = App.getGenFileDirPath() + "/" + relTypeCode + "/" + fileDir; // 저장경로
 		String destFilePath = destFileDirPath + "/" + fileName; // 파일경로 (저장경로 + 파일명)
 
 		// 경로에 해당하는 디렉터리 없으면 생성
@@ -92,6 +92,6 @@ public class GenFileService {
 		tempFile.renameTo(destFile);
 
 		return new ResultData("S-1", "성공하였습니다.", "id", newGenFileId);
-	}*/
+	}
 
 }

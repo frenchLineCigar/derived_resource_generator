@@ -1,5 +1,6 @@
 package com.example.drg.config;
 
+import com.example.drg.app.App;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -22,15 +23,10 @@ class MyApplicationListener implements ApplicationListener<ApplicationReadyEvent
 
 	@Override
 	public void onApplicationEvent(ApplicationReadyEvent event) {
-		log.info("MyApplicationListener.onApplicationEvent");
 		initDir();
 	}
 
 	private void initDir() {
-		log.info("MyApplicationListener.initDir");
-		log.info("genFileDirPath = " + genFileDirPath);
-		log.info("tmpDirPath = " + tmpDirPath);
-
 		File genFileDir = new File(genFileDirPath);
 		File tmpDir = new File(tmpDirPath);
 
@@ -41,6 +37,8 @@ class MyApplicationListener implements ApplicationListener<ApplicationReadyEvent
 		if (! tmpDir.exists()) {
 			tmpDir.mkdirs();
 		}
+
+		App.init(genFileDirPath, tmpDirPath);
 	}
 
 }

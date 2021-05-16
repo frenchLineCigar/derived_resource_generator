@@ -7,7 +7,6 @@ import com.example.drg.service.DerivedRequestService;
 import com.example.drg.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
@@ -33,34 +32,27 @@ public class UserImgController {
     private final DerivedRequestService derivedRequestService;
     private final GenFileService fileService;
 
-    @Value("${custom.genFileDirPath}")
-    private String genFileDirPath;
-
-    @Value("${custom.tmpDirPath}")
-    private String tmpDirPath;
-
-    /* 파생 url 의 이미지를 저장하고 보여준다 */
+    /* 이미지 저장 요청 */
     @RequestMapping("/img")
     public ResponseEntity<Resource> showImg(HttpServletRequest req, @RequestParam Map<String, Object> param) {
         String currentUrl = Util.getUrlFromHttpServletRequest(req); // 현재 요청 url
         String queryString = req.getQueryString(); // 쿼리 스트링 추출
-        String originUrl = queryString.split("url=")[1]; // 이미지를 다운로드할 파생 url 추출
+        String originUrl = queryString.split("url=")[1]; // 이미지 url
 
-        // 현재 요청 url과 같은 형태로 저장한 기존 이력이 있는지 조회
+        // 현재 요청(currentUrl)과 완전히 일치하는 기존 요청이 있었는지 조회
         DerivedRequest derivedRequest = derivedRequestService.getDerivedRequestByUrl(currentUrl);
 
-        // 없으면 저장 후 갱신된 결과를 리턴
         if (derivedRequest == null) {
             int width = Util.getAsInt(param.get("width"), 0);
             int height = Util.getAsInt(param.get("height"), 0);
             int maxWidth = Util.getAsInt(param.get("maxWidth"), 0);
 
-            // 다운로드 후 저장 경로를 변수에 담는다
-            String downloadedFilePath = Util.downloadFileByHttp(originUrl, tmpDirPath);
+            // 현재 저장할 이미지(originUrl)와 동일한 이미지가 있으면 해당 파일의 경로를 담는다
+            // 없으면 다운로드 후 파일 경로를 담는다
+            String filePath = derivedRequestService.getFilePathOrDownloadByOriginUrl(originUrl);
 
-            derivedRequestService.save(currentUrl, originUrl, width, height, maxWidth, downloadedFilePath); // 요청 정보 저장
-
-        derivedRequest = derivedRequestService.getDerivedRequestByUrl(currentUrl); // 재조회후 결과 갱신
+            derivedRequestService.save(currentUrl, originUrl, width, height, maxWidth, filePath); // 이미지 요청 정보 저장
+            derivedRequest = derivedRequestService.getDerivedRequestByUrl(currentUrl); // 재조회후 결과 갱신
         }
 
         // 저장된 파일 정보 조회
@@ -81,8 +73,7 @@ public class UserImgController {
     private ResponseEntity<Resource> getClientCachedResponseEntity(GenFile genFile, HttpServletRequest req) {
 
         // 파일 경로 찾기
-        String filePath = genFile.getFilePath(genFileDirPath);
-
+        String filePath = genFile.getFilePath();
 
         // 경로를 통해 파일을 읽고 응답바디에 담을 리소스 생성
         Resource resource = null;

@@ -4,11 +4,12 @@ import com.example.drg.dto.DerivedRequest;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Map;
-
 @Mapper
 public interface DerivedRequestDao {
-    void saveMeta(Map<String, Object> param);
+    void saveMeta(DerivedRequest derivedRequest);
 
     DerivedRequest findDerivedRequestByUrl(@Param("url") String url);
+
+    DerivedRequest findFirstDerivedRequestByOriginUrl(@Param("originUrl") String originUrl);
+
 }

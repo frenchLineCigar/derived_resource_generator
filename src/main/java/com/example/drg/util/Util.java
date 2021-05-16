@@ -1,13 +1,11 @@
 package com.example.drg.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -23,10 +21,35 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.UUID;
 
 @Slf4j
 public class Util {
+
+	// [참고용] application.yml 내 해당 프로퍼티의 값을 리턴 (스프링 DI 없이)
+	public static String getPropertyValueByName(String propertyName) {
+		Properties properties = new Properties();
+
+		try {
+			properties.load(new FileReader(new ClassPathResource("application.yml").getFile()));
+		} catch (IOException e) {
+			log.error(e.getMessage());
+		}
+
+		String value = null;
+
+		for (Object name : properties.keySet()) {
+			if ((name.equals(propertyName))) {
+				value = (String) properties.get(name);
+				log.info("name = " + "\"" + value + "\"");
+
+				break;
+			}
+		}
+
+		return value;
+	}
 
 	// Obj to int
 	public static int getAsInt(Object object, int fallback) {

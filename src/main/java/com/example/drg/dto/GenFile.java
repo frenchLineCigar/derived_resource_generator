@@ -1,12 +1,12 @@
 package com.example.drg.dto;
 
+import com.example.drg.app.App;
 import com.example.drg.util.Util;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -36,8 +36,9 @@ public class GenFile {
 	}
 
 	@JsonIgnore
-	public String getFilePath(String fileDirPath) {
-		return fileDirPath + getBaseFileUri();
+	public String getFilePath() {
+		return App.getGenFileDirPath() + getBaseFileUri();
+		// return genFileDirPath = Util.getPropertyValueByName("genFileDirPath"); // 이런 방법도 있음
 	}
 
 	@JsonIgnore

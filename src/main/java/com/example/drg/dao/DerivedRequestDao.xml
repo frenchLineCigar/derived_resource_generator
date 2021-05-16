@@ -24,4 +24,12 @@
 		  AND url = #{url}
 	</select>
 
+	<select id="findFirstDerivedRequestByOriginUrl" resultType="DerivedRequest">
+		SELECT *
+		FROM derivedRequest
+		WHERE 1
+		AND originUrl = #{originUrl}
+		ORDER BY id ASC LIMIT 1 # originUrl 을 최초로 저장한 요청 정보(derivedRequest)를 매개로 해당 이미지 파일을 찾을 수 있음
+	</select>
+
 </mapper>

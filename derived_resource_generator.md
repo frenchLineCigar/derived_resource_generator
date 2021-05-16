@@ -1,5 +1,16 @@
 # TIL
 
+---
+
+[2021-05-14] 이미지 출처(originUrl)가 중복되는 요청은 원본파일 다운로드 생략 후 기존 이미지 활용
+
+ - retrieve / get / fetch
+  - [retrieve get fetch - Google 검색](https://www.google.com/search?q=retrieve+get+fetch&oq=retrieve+get+fetch&aqs=chrome..69i57j0i8i30j69i61.248j0j9&sourceid=chrome&ie=UTF-8)
+  - [[개발자 영어] get, retreive, fetch 등 가져오는 동사들](https://ssomu.tistory.com/60)
+  - [코딩에 많이 쓰이는 영어](https://tagilog.tistory.com/537)
+  - [번외 — 개발자가 알아두면 좋은 영어 표현들 및 발음 실수들](https://medium.com/%EC%98%A4%EB%8A%98%EC%9D%98-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D/%EB%B2%88%EC%99%B8-%EA%B0%9C%EB%B0%9C%EC%9E%90%EA%B0%80-%EC%95%8C%EC%95%84%EB%91%90%EB%A9%B4-%EC%A2%8B%EC%9D%80-%EC%98%81%EC%96%B4-%ED%91%9C%ED%98%84%EB%93%A4-%EB%B0%8F-%EB%B0%9C%EC%9D%8C-%EC%8B%A4%EC%88%98%EB%93%A4-db8f1b83d96e)
+  
+
 
 ---
 
