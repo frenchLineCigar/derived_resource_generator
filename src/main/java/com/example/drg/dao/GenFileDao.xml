@@ -20,7 +20,9 @@
 			fileExtType2Code = #{fileExtType2Code},
 			fileExt = #{fileExt},
 			fileSize = #{fileSize},
-			fileDir = #{fileDir}
+			fileDir = #{fileDir},
+			width = #{width},
+			height = #{height}
 	</insert>
 
 	<select id="findGenFileById" resultType="GenFile">
@@ -48,6 +50,40 @@
 		<if test="fileNo != null">
 			AND fileNo = #{fileNo}
 		</if>
+	</select>
+
+	<select id="findGenFileByFileExtTypeCodeAndWidthAndHeight" resultType="GenFile">
+		SELECT *
+		FROM genFile
+		WHERE 1
+		  AND relTypeCode = #{relTypeCode}
+		  AND relId = #{relId}
+		  AND fileExtTypeCode = #{fileExtTypeCode}
+		  AND width = #{width}
+		  AND height = #{height}
+	</select>
+
+	<select id="findGenFileByFileExtTypeCodeAndWidth" resultType="GenFile">
+		SELECT *
+		FROM genFile
+		WHERE 1
+		  AND relTypeCode = #{relTypeCode}
+		  AND relId = #{relId}
+		  AND fileExtTypeCode = #{fileExtTypeCode}
+		  AND width = #{width}
+	</select>
+
+	<select id="findGenFileByFileExtTypeCodeAndMaxWidth" resultType="GenFile">
+		SELECT *
+		FROM genFile
+		WHERE 1
+		  AND relTypeCode = #{relTypeCode}
+		  AND relId = #{relId}
+		  AND fileExtTypeCode = #{fileExtTypeCode}
+        <![CDATA[
+		  AND width <= #{maxWidth}
+		]]>
+		ORDER BY width DESC LIMIT 1 # width 중 가장 큰 것
 	</select>
 
 </mapper>

@@ -32,7 +32,7 @@ public class UserImgController {
     private final DerivedRequestService derivedRequestService;
     private final GenFileService fileService;
 
-    /* 이미지 저장 요청 */
+    /* 이미지 파생 */
     @RequestMapping("/img")
     public ResponseEntity<Resource> showImg(HttpServletRequest req, @RequestParam Map<String, Object> param) {
         String currentUrl = Util.getUrlFromHttpServletRequest(req); // 현재 요청 url
@@ -47,18 +47,32 @@ public class UserImgController {
             int height = Util.getAsInt(param.get("height"), 0);
             int maxWidth = Util.getAsInt(param.get("maxWidth"), 0);
 
-            // 현재 저장할 이미지(originUrl)와 동일한 이미지가 있으면 해당 파일의 경로를 담는다
-            // 없으면 다운로드 후 파일 경로를 담는다
-            String filePath = derivedRequestService.getFilePathOrDownloadByOriginUrl(originUrl);
-
-            derivedRequestService.save(currentUrl, originUrl, width, height, maxWidth, filePath); // 이미지 요청 정보 저장
+            derivedRequestService.save(currentUrl, originUrl, width, height, maxWidth); // 파생 리소스 저장
             derivedRequest = derivedRequestService.getDerivedRequestByUrl(currentUrl); // 재조회후 결과 갱신
         }
 
-        // 저장된 파일 정보 조회
-        GenFile originGenFile = derivedRequestService.getOriginGenFile(derivedRequest);
+        // 클라이언트 요구 사항
+        int width = derivedRequest.getWidth(); // 요청 너비
+        int height = derivedRequest.getHeight(); // 요청 높이
+        int maxWidth = derivedRequest.getMaxWidth(); // 요청 최대너비
 
-        return getClientCachedResponseEntity(originGenFile, req);
+        // 요구사항에 맞는 이미지로 가공
+        if ( width > 0 && height > 0 ) { // 너비, 높이 둘 다 있는 경우 (너비 지정 시 최대너비 무시)
+            GenFile derivedGenFile = derivedRequestService.getDerivedGenFileByWidthAndHeightOrMake(derivedRequest, width, height);
+            return getClientCachedResponseEntity(derivedGenFile, req);
+        }
+        else if ( width > 0 ) { // 너비만 있는 경우
+            GenFile derivedGenFile = derivedRequestService.getDerivedGenFileByWidthOrMake(derivedRequest, width);
+            return getClientCachedResponseEntity(derivedGenFile, req);
+        }
+        else if ( maxWidth > 0 ) { // 최대너비만 있는 경우
+            GenFile derivedGenFile = derivedRequestService.getDerivedGenFileByMaxWidthOrMake(derivedRequest, maxWidth);
+            return getClientCachedResponseEntity(derivedGenFile, req);
+        }
+        else { // 그 밖의 경우는 원본 리턴
+            GenFile originGenFile = derivedRequestService.getOriginGenFile(derivedRequest.getOriginUrl());
+            return getClientCachedResponseEntity(originGenFile, req);
+        }
     }
 
     // 아이디로 이미지 조회후 보여주기
@@ -92,6 +106,7 @@ public class UserImgController {
             contentType = MediaType.APPLICATION_OCTET_STREAM_VALUE; // application/octet-stream
         }
 
+        log.info("filePath = " + filePath);
         log.info("contentType = " + contentType);
 
         return ResponseEntity.ok()

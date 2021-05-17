@@ -29,6 +29,8 @@ public class GenFile {
 	private String fileExtType2Code; //파일 규격2 코드 (Ex. jpg, mp4)
 	private String fileExt; //파일 확장자
 	private String fileDir; //파일 저장 폴더 : yyyy_MM (Ex. 2021_03)
+	private int width; // 파일의 실제 너비
+	private int height; // 파일의 실제 높이
 
 	/* 단위 환산된 파일 크기 리턴 (byte, KB, MB) */
 	public String getFileSizeWithUnit() {
@@ -58,13 +60,12 @@ public class GenFile {
 		return "/common/file/doDownload?id=" + id;
 	}
 
-	public static GenFile create(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo,
-	                             int fileSize, String originFileName, String fileExtTypeCode, String fileExtType2Code, String fileExt, String fileDir) {
+	public static GenFile create(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo, int fileSize, String originFileName, String fileExtTypeCode, String fileExtType2Code, String fileExt, String fileDir, int height, int width) {
+		return GenFile.builder().relTypeCode(relTypeCode).relId(relId).typeCode(typeCode).type2Code(type2Code).fileNo(fileNo).fileSize(fileSize).originFileName(originFileName).fileExtTypeCode(fileExtTypeCode).fileExtType2Code(fileExtType2Code).fileExt(fileExt).fileDir(fileDir).width(height).height(width).build();
+	}
 
-		return GenFile.builder()
-				.relTypeCode(relTypeCode).relId(relId).typeCode(typeCode).type2Code(type2Code).fileNo(fileNo)
-				.fileSize(fileSize).originFileName(originFileName).fileExtTypeCode(fileExtTypeCode).fileExtType2Code(fileExtType2Code).fileExt(fileExt).fileDir(fileDir)
-				.build();
+	public static GenFile create(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo, int fileSize, String originFileName, String fileExtTypeCode, String fileExtType2Code, String fileExt, String fileDir) {
+		return create(relTypeCode, relId, typeCode, type2Code, fileNo, fileSize, originFileName, fileExtTypeCode, fileExtType2Code, fileExt, fileDir, 0, 0);
 	}
 
 }

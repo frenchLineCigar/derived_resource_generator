@@ -2,6 +2,34 @@
 
 ---
 
+[2021-05-16] 파생 요청 사항을 만족하는 기존 이미지가 있으면 이를 활용
+파생 요청을 받았을 때 기존 이미지를 활용할 수 있다면, 패스
+
+ - [JAVA] 이미지, 동영상 파일의 너비, 높이 얻기
+   - [java get img file width - Google 검색](https://www.google.com/search?q=java+get+img+file+width&oq=java+get+img+file+width&aqs=chrome..69i57j33i160l2.4982j0j7&sourceid=chrome&ie=UTF-8)
+   - [javax.imageio - How to get image height and width using java? - Stack Overflow](https://stackoverflow.com/questions/672916/how-to-get-image-height-and-width-using-java/9083914#9083914)
+ 
+ - [MyBatis/XML] 마이바티스 비교연산자
+   - 쿼리를 작성할 때, '<', '>', '&'를 사용해야 하는 경우가 생기는데 xml에서 그냥 사용할 경우 태그로 인식하는 경우가 나타난다. 이럴 경우 사용하는 것이 <! CDATA [...]]>이다.
+   - 간단한 쿼리에 부등호가 필요하다면 '&lt;', '&gt;'로 처리하면 되지만, 부등호를 여러 개를 사용할 때는 <! CDATA [...]]>범위로 사용하는 방법이 간편하다.
+   - **단, <!CDATA[...]]>를 사용하는 경우 동적(다이나믹) 쿼리를 사용할 수 없다는 점을 유의하자.**
+   - [[MyBatis] 부등호, 비교연산자(<, >, <=, >=, &) 사용 방법](https://codingmomong.tistory.com/404)
+   - [[Mybatis] 비교연산자 부등호 >,< 안될때 :: 기타치는 개발자의 야매 가이드](https://yamea-guide.tistory.com/entry/Mybatis-%EB%B9%84%EA%B5%90%EC%97%B0%EC%82%B0%EC%9E%90-%EB%B6%80%EB%93%B1%ED%98%B8-%EC%95%88%EB%90%A0%EB%95%8C)
+   - 검색
+     - [mybatis less than in xml](https://www.google.com/search?q=mybatis+less+than+in+xml&oq=mybatis+less+than+in+xml&aqs=chrome..69i57j33i160.427j0j7&sourceid=chrome&ie=UTF-8)
+   - 참고
+     - [[Back end] Mybatis &lt; &gt; CDATA](https://reference-m1.tistory.com/308)
+     - [MyBatis mapper.xml 비교연산자 <=, >=, <, > 처리방법](https://sinpk.tistory.com/entry/mybatis-mapperxml-%EB%B9%84%EA%B5%90%EC%97%B0%EC%82%B0%EC%9E%90-%EC%B2%98%EB%A6%AC%EB%B0%A9%EB%B2%95)
+     - [Mybatis SQL xml handles less than and greater than - Programmer Sought](https://www.programmersought.com/article/5786424700/)
+     - [Mybatis special symbols (greater than, less than, not equal) and summary of commonly used functions - Programmer Sought](https://www.programmersought.com/article/22761484017/)
+     - [What is the proper syntax for the Less Than/Equal operator in MyBatis 3? - Stack Overflow](https://stackoverflow.com/questions/32042726/what-is-the-proper-syntax-for-the-less-than-equal-operator-in-mybatis-3/32042753)
+     - [Mybatis : "less than" issue in Select annotations - Stack Overflow](https://stackoverflow.com/questions/29092950/mybatis-less-than-issue-in-select-annotations)
+     - [How to implement the greater than or equal SQL statement in iBatis? - Stack Overflow](https://stackoverflow.com/questions/2023408/how-to-implement-the-greater-than-or-equal-sql-statement-in-ibatis)
+     - [112일차-MyBatis](https://chocotaste.tistory.com/112)
+     - [MyBatis if test 안에서 integer 값 비교하기 : 네이버 블로그](https://m.blog.naver.com/PostView.nhn?blogId=admass&logNo=220548334257&proxyReferer=https:%2F%2Fwww.google.com%2F)
+     - [MyBatis에서 자주하는 실수 : 작은따옴표.. : 네이버블로그](https://blog.naver.com/admass/220533442483)
+---
+
 [2021-05-14] 이미지 출처(originUrl)가 중복되는 요청은 원본파일 다운로드 생략 후 기존 이미지 활용
 
  - retrieve / get / fetch
