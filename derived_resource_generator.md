@@ -1,5 +1,30 @@
 # TIL
 
+
+---
+
+[2021-05-17]
+
+ - [JAVA/SPRING] 이미지 리사이즈 & 크롭
+   - Resize & Crop Image
+   - [spring boot img crop resize - Google 검색](https://www.google.com/search?q=spring+boot+img+crop+resize&oq=spring+boot+img+crop+resize&aqs=chrome.0.69i59.575j0j7&sourceid=chrome&ie=UTF-8)
+   - [How Can I Resize an Image Using Java?](https://www.baeldung.com/java-resize-image)
+     - [Imgscalr](https://www.baeldung.com/java-resize-image#imgscalr)
+   - BufferedImage 저장 
+     - [buffered img save - Google 검색](https://www.google.com/search?q=buffered+img+save&oq=buffered+img+save&aqs=chrome..69i57j0i13l2j0i13i30j0i5i13i30j0i8i13i30l5.325j0j9&sourceid=chrome&ie=UTF-8)
+     - [How to save a BufferedImage as a File - Stack Overflow](https://stackoverflow.com/questions/12674064/how-to-save-a-bufferedimage-as-a-file/12674109#12674109)
+     - [Java로 썸네일(Thumbnail) 이미지 만들기](https://offbyone.tistory.com/114)
+   - Java Code Examples for org.imgscalr.Scalr#resize()
+     - [Scalr.resize save java - Google 검색](https://www.google.com/search?q=Scalr.resize+save+java&oq=Scalr.resize+save+java&aqs=chrome.0.69i59l3.342j0j9&sourceid=chrome&ie=UTF-8)
+     - [org.imgscalr.Scalr#resize](https://www.programcreek.com/java-api-examples/?class=org.imgscalr.Scalr&method=resize)
+   - FileOutPutStream 닫기
+     - [FileOutPutStream 닫기 - Google 검색](https://www.google.com/search?q=FileOutPutStream+%EB%8B%AB%EA%B8%B0&oq=FileOutPutStream+%EB%8B%AB%EA%B8%B0&aqs=chrome..69i57j0i333l4.5720j1j7&sourceid=chrome&ie=UTF-8)
+   
+ - [SQL/MySQL] ORDER BY - 다중 정렬 조건
+   - ORDER BY 를 여러개 사용할 경우 '왼쪽부터 순차적으로 정렬이 적용'되기 때문에 순서를 고려
+   - [order by 2개 콤마 - Google 검색](https://www.google.com/search?q=order+by+2%EA%B0%9C+%EC%BD%A4%EB%A7%88&oq=order+by+2%EA%B0%9C+%EC%BD%A4%EB%A7%88&aqs=chrome.0.69i59.322j0j9&sourceid=chrome&ie=UTF-8)
+   - [[SQL] 다중정렬 ORDER BY](https://dar0m.tistory.com/60)
+
 ---
 
 [2021-05-16] 파생 요청 사항을 만족하는 기존 이미지가 있으면 이를 활용

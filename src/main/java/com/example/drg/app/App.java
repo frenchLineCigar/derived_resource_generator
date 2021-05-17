@@ -3,6 +3,7 @@ package com.example.drg.app;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.util.UUID;
 
 @Slf4j
 public class App {
@@ -29,6 +30,10 @@ public class App {
 
 	public static String getTmpDirPath() {
 		return tmpDirPath;
+	}
+
+	public static String getNewTmpFilePath(String fileExt) {
+		return tmpDirPath + "/" + UUID.randomUUID() + "." + fileExt;
 	}
 
 	public static boolean existsInTmpDir(String filePath) {

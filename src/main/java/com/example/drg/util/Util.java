@@ -1,10 +1,13 @@
 package com.example.drg.util;
 
 import lombok.extern.slf4j.Slf4j;
+import org.imgscalr.Scalr;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -23,6 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
+
+import static org.imgscalr.Scalr.*;
 
 @Slf4j
 public class Util {
@@ -310,6 +315,7 @@ public class Util {
 		}
 
 		try {
+			// Using Java NIO
 			Files.move(sourceFile.toPath(), destFile.toPath(), StandardCopyOption.REPLACE_EXISTING); //덮어쓰기 옵션
 			//Files.move(sourceFile.toPath(), destFile.toPath());
 		} catch (IOException e) {
@@ -351,6 +357,8 @@ public class Util {
 			ReadableByteChannel readableByteChannel = Channels.newChannel(new URL(fileUrl).openStream());
 			FileChannel fileChannel = fileOutputStream.getChannel();
 			fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+
+			fileChannel.close(); // 자원 해제
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
@@ -396,6 +404,8 @@ public class Util {
 		try {
 			in = new URL(fileUrl).openStream();
 			Files.copy(in, Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING); //덮어쓰기 옵션
+
+			in.close(); // 자원 해제
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -524,4 +534,89 @@ public class Util {
 
 		return filePath;
 	}
+
+	/* [기본] 이미지 리사이징 & 크롭 (Using Imgscalr) */
+	public static void resizeImg(String filePath, String destFilePath, int width, int height) {
+		try {
+			BufferedImage bufferedImage = ImageIO.read(new File(filePath));
+
+			int originWidth = bufferedImage.getWidth();
+			int originHeight = bufferedImage.getHeight();
+
+			int newWidth = originWidth;
+			int newHeight = (originWidth * height) / width;
+
+			if (newHeight > originHeight) {
+				newWidth = (originHeight * width) / height;
+				newHeight = originHeight;
+			}
+
+			BufferedImage cropedBufferedImage = crop(bufferedImage, (originWidth - newWidth) / 2, (originHeight - newHeight) / 2, newWidth, newHeight);
+			BufferedImage destBufferedImage = resize(cropedBufferedImage, Method.ULTRA_QUALITY, Mode.FIT_EXACT, width, height); // width, height 대로 정확히 변환
+			// BufferedImage destBufferedImage = resize(cropedBufferedImage, Method.ULTRA_QUALITY, Mode.AUTOMATIC, width, height); // Mode.AUTOMATIC => width, height 사이가 크게 차이날 경우, 큰 쪽에 맞춰 작은 쪽이 보정됨
+
+			String destFileExt = Util.getFileExt(destFilePath); // 확장자 추출
+			FileOutputStream fileOutputStream = new FileOutputStream(destFilePath); // 스트림 열고 !! (비동기 쓰레드 처리)
+			ImageIO.write(destBufferedImage, destFileExt, fileOutputStream); // 쓰고 !!
+			fileOutputStream.close(); // 반드시 닫기!!
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/* 이미지 리사이징 & 크롭 (Using Imgscalr) - width 입력 시, height 자동 환산 */
+	public static void resizeImgWidth(String filePath, String destFilePath, int width) {
+
+		// 지정된 높이(height)가 없으므로, 원본 종횡비 기준으로 산정
+		int height = 0;
+
+		try {
+			BufferedImage bufferedImage = ImageIO.read(new File(filePath));
+
+			int originWidth = bufferedImage.getWidth();
+			int originHeight = bufferedImage.getHeight();
+
+			height = originHeight * width / originWidth; // 비율에 맞게 산정된 높이
+			log.info("height = " + height); // => if width is 536, then height is 354.
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		resizeImg(filePath, destFilePath, width, height);
+	}
+
+	/* 이미지 리사이징 & 크롭 (Using Imgscalr) - height 입력 시, width 자동 환산 */
+	public static void resizeImgHeight(String filePath, String destFilePath, int height) {
+
+		// 지정된 너비(width)가 없으므로, 원본 종횡비 기준으로 산정
+		int width = 0;
+
+		try {
+			BufferedImage bufferedImage = ImageIO.read(new File(filePath));
+
+			int originWidth = bufferedImage.getWidth();
+			int originHeight = bufferedImage.getHeight();
+
+			width = originWidth * height / originHeight; // 비율에 맞게 산정된 너비
+			log.info("width = " + width); // => if height is 354, then width is 536.
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		resizeImg(filePath, destFilePath, width, height);
+	}
+
+	/*public static void resizeImgTest(String filePath, String destFilePath, int width) {
+		try {
+			BufferedImage bufferedImage = ImageIO.read(new File(filePath));
+			Scalr.resize(bufferedImage, width); // 리사이징
+			String destFileExt = Util.getFileExt(destFilePath); // 확장자 추출
+			ImageIO.write(bufferedImage, destFileExt, new File(destFilePath)); // FileOutputStream 열지 않고 File 객체 지정해도 됨
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}*/
 }

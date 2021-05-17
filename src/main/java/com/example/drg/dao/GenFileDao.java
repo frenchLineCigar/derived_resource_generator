@@ -16,8 +16,5 @@ public interface GenFileDao {
 	                    @Param("fileNo") int fileNo);
 
 	GenFile findGenFileByFileExtTypeCodeAndWidthAndHeight(String relTypeCode, int relId, String fileExtTypeCode, int width, int height);
-
-	GenFile findGenFileByFileExtTypeCodeAndWidth(String relTypeCode, int relId, String fileExtTypeCode, int width);
-
 	GenFile findGenFileByFileExtTypeCodeAndMaxWidth(String relTypeCode, int relId, String fileExtTypeCode, int maxWidth);
 }

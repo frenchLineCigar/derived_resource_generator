@@ -37,9 +37,6 @@ public class GenFileService {
 		return fileDao.findGenFileByFileExtTypeCodeAndWidthAndHeight(relTypeCode, relId, fileExtTypeCode, width, height);
 	}
 
-	public GenFile getGenFileByFileExtTypeCodeAndWidth(String relTypeCode, int relId, String fileExtTypeCode, int width) {
-		return fileDao.findGenFileByFileExtTypeCodeAndWidth(relTypeCode, relId, fileExtTypeCode, width);
-	}
 	public GenFile getGenFileByFileExtTypeCodeAndMaxWidth(String relTypeCode, int relId, String fileExtTypeCode, int maxWidth) {
 		return fileDao.findGenFileByFileExtTypeCodeAndMaxWidth(relTypeCode, relId, fileExtTypeCode, maxWidth);
 	}

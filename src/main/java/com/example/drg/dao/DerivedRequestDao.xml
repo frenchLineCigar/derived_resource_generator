@@ -28,8 +28,38 @@
 		SELECT *
 		FROM derivedRequest
 		WHERE 1
-		AND originUrl = #{originUrl}
-		ORDER BY id ASC LIMIT 1 # originUrl 을 최초로 저장한 요청 정보(derivedRequest)를 매개로 해당 이미지 파일을 찾을 수 있음
+		  AND originUrl = #{originUrl}
+		ORDER BY id ASC
+		LIMIT 1 # 원본 크기의 이미지가 생성된 최초 파생 요청(derivedRequest)
+	</select>
+
+	<select id="findFirstDerivedRequestByWidthAndHeight" resultType="DerivedRequest">
+		SELECT *
+		FROM derivedRequest
+		WHERE 1
+		<if test="originUrl != null">
+			AND originUrl = #{originUrl}
+		</if>
+		<if test="width != null">
+			AND width = #{width}
+		</if>
+		<if test="height != null">
+			AND height = #{height}
+		</if>
+		ORDER BY id ASC LIMIT 1; # 지정한 width 와 height 크기로 이미지가 생성된 최초 파생 요청(derivedRequest)
+	</select>
+
+	<select id="findFirstDerivedRequestByMaxWidth" resultType="DerivedRequest">
+		SELECT *
+		FROM derivedRequest
+		WHERE 1
+		  AND originUrl = #{originUrl}
+		  AND height = 0 # 특정 height 가 지정되지 않을 경우(원본 비율이 유지된 경우)에 height 는 0
+		<![CDATA[
+		  AND width <= #{maxWidth}
+		]]>
+		ORDER BY width DESC, id ASC
+		LIMIT 1; # maxWidth 이하인 width 중 가장 큰 width 로 이미지가 생성된 최초 파생 요청(derivedRequest)
 	</select>
 
 </mapper>
