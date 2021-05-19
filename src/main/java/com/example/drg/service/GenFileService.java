@@ -39,13 +39,13 @@ public class GenFileService {
 		return fileDao.findGenFileByFileExtTypeCodeAndWidthAndHeight(relTypeCode, relId, fileExtTypeCode, width, height);
 	}
 
-//	public GenFile getGenFileByFileExtTypeCodeAndMaxWidth(String relTypeCode, int relId, String fileExtTypeCode, int maxWidth) {
-//		return fileDao.findGenFileByFileExtTypeCodeAndMaxWidth(relTypeCode, relId, fileExtTypeCode, maxWidth);
-//	}
-
-	public List<GenFile> getGenFileListByFileExtTypeCodeAndMaxWidth(String relTypeCode, List<Integer> relIds, String fileExtTypeCode, int maxWidth) {
-		return fileDao.findGenFileListByFileExtTypeCodeAndMaxWidth(relTypeCode, relIds, fileExtTypeCode, maxWidth);
+	public GenFile getGenFileByFileExtTypeCodeAndMaxWidth(String relTypeCode, int relId, String fileExtTypeCode, int maxWidth) {
+		return fileDao.findGenFileByFileExtTypeCodeAndMaxWidth(relTypeCode, relId, fileExtTypeCode, maxWidth);
 	}
+
+//	public List<GenFile> getGenFileListByFileExtTypeCodeAndMaxWidth(String relTypeCode, List<Integer> relIds, String fileExtTypeCode, int maxWidth) {
+//		return fileDao.findGenFileListByFileExtTypeCodeAndMaxWidth(relTypeCode, relIds, fileExtTypeCode, maxWidth);
+//	}
 
 	// 파일 저장
 	public int save(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo,
