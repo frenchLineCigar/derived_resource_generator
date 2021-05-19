@@ -10,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @Transactional
@@ -152,13 +156,40 @@ public class DerivedRequestService {
         return fileService.getGenFileByFileExtTypeCodeAndWidthAndHeight("derivedRequest", derivedRequestByWidth.getId(), "img", width, height);
     }
 
+//    // width 가 maxWidth 이하의 크기 중 가장 큰 이미지 조회
+//    private GenFile getDerivedGenFileByMaxWidth(DerivedRequest derivedRequest, int maxWidth) {
+//
+//        // width 가 maxWidth 이하의 크기 중, 가장 큰 width 의 이미지가 생성된 최초 파생 요청
+//        DerivedRequest derivedRequestByMaxWidth = derivedRequestDao.findFirstDerivedRequestByMaxWidth(derivedRequest.getOriginUrl(), maxWidth);
+//
+//        return fileService.getGenFileByFileExtTypeCodeAndMaxWidth("derivedRequest", derivedRequestByMaxWidth.getId(), "img", maxWidth);
+//    }
+
     // width 가 maxWidth 이하의 크기 중 가장 큰 이미지 조회
     private GenFile getDerivedGenFileByMaxWidth(DerivedRequest derivedRequest, int maxWidth) {
 
-        // width 가 maxWidth 이하의 크기 중, 가장 큰 width 의 이미지가 생성된 최초 파생 요청
-        DerivedRequest derivedRequestByMaxWidth = derivedRequestDao.findFirstDerivedRequestByMaxWidth(derivedRequest.getOriginUrl(), maxWidth);
+        // 결과를 담을 변수
+        GenFile derivedGenFile = null;
 
-        return fileService.getGenFileByFileExtTypeCodeAndMaxWidth("derivedRequest", derivedRequestByMaxWidth.getId(), "img", maxWidth);
+        // width 가 maxWidth 이하인 모든 이미지 파생 요청
+        List<Integer> derivedRequestIds =
+                derivedRequestDao.findDerivedRequestListByMaxWidth(derivedRequest.getOriginUrl(), maxWidth).stream()
+                        .filter(request -> request.getHeight() == 0) // 원본비율이 유지된 경우만(특정 height 가 지정되지 않은 경우)
+                        .map(DerivedRequest::getId) // 아이디만 추출
+                        .collect(Collectors.toList());
+
+        if (! derivedRequestIds.isEmpty()) {
+
+            // 일치하는 이미지 조회 결과
+            List<GenFile> derivedGenFileList = fileService.getGenFileListByFileExtTypeCodeAndMaxWidth("derivedRequest", derivedRequestIds, "img", maxWidth);
+
+            // 결과 중 가장 큰 width 이미지
+            derivedGenFile = derivedGenFileList.stream()
+                    .max(Comparator.comparingInt(GenFile::getWidth)) //가장 큰 width 찾기
+                    .orElse(null);
+        }
+
+        return derivedGenFile;
     }
 
     // 지정한 width, height 로 변환한 이미지 파일 생성 및 저장 (크롭 & 리사이징)

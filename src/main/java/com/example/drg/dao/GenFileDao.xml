@@ -73,16 +73,30 @@
 		</if>
 	</select>
 
-	<select id="findGenFileByFileExtTypeCodeAndMaxWidth" resultType="GenFile">
+<!--	<select id="findGenFileByFileExtTypeCodeAndMaxWidth" resultType="GenFile">-->
+<!--		SELECT *-->
+<!--		FROM genFile-->
+<!--		WHERE 1-->
+<!--		  AND relTypeCode = #{relTypeCode}-->
+<!--		  AND relId = #{relId}-->
+<!--		  AND fileExtTypeCode = #{fileExtTypeCode}-->
+<!--        <![CDATA[-->
+<!--		  AND width <= #{maxWidth}-->
+<!--		]]>-->
+<!--	</select>-->
+
+	<select id="findGenFileListByFileExtTypeCodeAndMaxWidth" resultType="GenFile">
 		SELECT *
 		FROM genFile
 		WHERE 1
-		  AND relTypeCode = #{relTypeCode}
-		  AND relId = #{relId}
-		  AND fileExtTypeCode = #{fileExtTypeCode}
-        <![CDATA[
+		AND relTypeCode = #{relTypeCode}
+		AND relId IN
+		<foreach collection="relIds" item="relId" index="index" open="(" separator="," close=")">
+			#{relId}
+		</foreach>
+		AND fileExtTypeCode = #{fileExtTypeCode}
+		<![CDATA[
 		  AND width <= #{maxWidth}
 		]]>
 	</select>
-
 </mapper>
