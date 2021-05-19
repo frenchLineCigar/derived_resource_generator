@@ -22,15 +22,15 @@ public class DerivedRequestService {
     private final DerivedRequestDao derivedRequestDao;
     private final GenFileService fileService;
 
-    public DerivedRequest getDerivedRequestByUrl(String url) {
-        return derivedRequestDao.findDerivedRequestByUrl(url);
+    public DerivedRequest getDerivedRequestByRequestUrl(String requestUrl) {
+        return derivedRequestDao.findDerivedRequestByRequestUrl(requestUrl);
     }
 
     // 파생 리소스 저장
-    public void save(String url, String originUrl, Integer width, Integer height, Integer maxWidth) {
+    public void save(String requestUrl, String originUrl, Integer width, Integer height, Integer maxWidth) {
 
         // 파생 요청 객체 생성
-        DerivedRequest newDerivedRequest = DerivedRequest.create(url, originUrl, width, height, maxWidth);
+        DerivedRequest newDerivedRequest = DerivedRequest.create(requestUrl, originUrl, width, height, maxWidth);
 
         // 파생 요청 정보 저장
         derivedRequestDao.saveMeta(newDerivedRequest);

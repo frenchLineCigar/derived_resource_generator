@@ -56,3 +56,9 @@ ALTER TABLE derivedRequest DROP INDEX originUrl, ADD KEY originUrl (originUrl AS
 # genFile 테이블에 파일의 너비(width), 높이(height) 정보에 대한 칼럼 추가
 ALTER TABLE genFile ADD COLUMN `width` SMALLINT(2) UNSIGNED NOT NULL AFTER `fileDir`;
 ALTER TABLE genFile ADD COLUMN `height` SMALLINT(2) UNSIGNED NOT NULL AFTER `width`;
+
+# derivedRequest 테이블 컬럼명 변경 : url -> requestUrl
+ALTER TABLE derivedrequest
+CHANGE `url` `requestUrl` CHAR(200) CHARSET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+DROP INDEX `url`,
+ADD UNIQUE INDEX `requestUrl` (`requestUrl`) VISIBLE;

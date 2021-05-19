@@ -10,18 +10,18 @@
 		SET
 			regDate = NOW(),
 			updateDate = NOW(),
-			url = #{url},
+			requestUrl = #{requestUrl},
 			originUrl = #{originUrl},
 		    width = #{width},
 		    height = #{height},
 		    maxWidth = #{maxWidth}
 	</insert>
 
-	<select id="findDerivedRequestByUrl" resultType="DerivedRequest">
+	<select id="findDerivedRequestByRequestUrl" resultType="DerivedRequest">
 		SELECT *
 		FROM derivedRequest
 		WHERE 1
-		  AND url = #{url}
+		  AND requestUrl = #{requestUrl}
 	</select>
 
 	<select id="findFirstDerivedRequestByOriginUrl" resultType="DerivedRequest">

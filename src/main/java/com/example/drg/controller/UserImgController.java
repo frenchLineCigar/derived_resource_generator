@@ -34,13 +34,11 @@ public class UserImgController {
 
     /* 이미지 파생 */
     @RequestMapping("/img")
-    public ResponseEntity<Resource> showImg(HttpServletRequest req, @RequestParam Map<String, Object> param) {
+    public ResponseEntity<Resource> showImg(HttpServletRequest req, @RequestParam Map<String, Object> param, @RequestParam("url") String originUrl) {
         String currentUrl = Util.getUrlFromHttpServletRequest(req); // 현재 요청 url
-        String queryString = req.getQueryString(); // 쿼리 스트링 추출
-        String originUrl = queryString.split("url=")[1]; // 이미지 url
 
         // 현재 요청(currentUrl)과 완전히 일치하는 기존 요청이 있었는지 조회
-        DerivedRequest derivedRequest = derivedRequestService.getDerivedRequestByUrl(currentUrl);
+        DerivedRequest derivedRequest = derivedRequestService.getDerivedRequestByRequestUrl(currentUrl);
 
         if (derivedRequest == null) {
             int width = Util.getAsInt(param.get("width"), 0);
@@ -48,7 +46,7 @@ public class UserImgController {
             int maxWidth = Util.getAsInt(param.get("maxWidth"), 0);
 
             derivedRequestService.save(currentUrl, originUrl, width, height, maxWidth); // 파생 리소스 저장
-            derivedRequest = derivedRequestService.getDerivedRequestByUrl(currentUrl); // 재조회후 결과 갱신
+            derivedRequest = derivedRequestService.getDerivedRequestByRequestUrl(currentUrl); // 재조회후 결과 갱신
         }
 
         // 클라이언트 요구 사항

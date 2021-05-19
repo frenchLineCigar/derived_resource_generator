@@ -10,7 +10,7 @@ import java.util.List;
 public interface DerivedRequestDao {
     void saveMeta(DerivedRequest derivedRequest);
 
-    DerivedRequest findDerivedRequestByUrl(@Param("url") String url);
+    DerivedRequest findDerivedRequestByRequestUrl(@Param("requestUrl") String requestUrl);
 
     // 원본 크기의 이미지가 생성된 최초 파생 요청(derivedRequest)
     DerivedRequest findFirstDerivedRequestByOriginUrl(@Param("originUrl") String originUrl);
