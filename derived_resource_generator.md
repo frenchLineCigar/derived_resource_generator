@@ -1,5 +1,19 @@
 # TIL
 
+---
+
+[2021-05-22]
+
+ - [SPRING/JAVA] java file content type / apache tika
+   - [Getting a File's Mime Type in Java](https://www.baeldung.com/java-file-mime-type#apache-tika)
+   - [자바(Java)로 파일의 마임 타입(MIME Type) 확인하기](https://offbyone.tistory.com/330)
+   - [@deveely :: Java에서 파일의 Mime type을 판별하는 방법](https://do-study.tistory.com/113) 
+
+
+ - [SPRING/JAVA] apache tika
+   - [[JAVA] Apache Tika 아파치 티카 :: Log](https://logging-panda.tistory.com/72)
+   - [아파치 티카(apache tika) 로 컨텐츠 파싱하기](https://www.lesstif.com/java/apache-tika-61898782.html)
+   - [Java 파일 읽는 방법, Apache Tika(아파치 티카) 사용하여 파일 읽기](https://kingname.tistory.com/214)
 
 ---
 
@@ -258,7 +272,10 @@
   - [Get file name from URL - Stack Overflow](https://stackoverflow.com/questions/605696/get-file-name-from-url/33871029#33871029)
 
 
-- java.util.regex.PatternSyntaxException: Dangling meta character '?' near index 0
+- java replace dot
+  - [Java String split 또는 replace 할 때 .(Dot, 점) 안되는 현상](https://marobiana.tistory.com/137)
+  - [ReplaceAll에서 dot(.) 사용하기](https://ohgyun.com/4)
+  - java.util.regex.PatternSyntaxException: Dangling meta character '?' near index 0
   - [[JAVA] java.util.regex.PatternSyntaxException: Dangling meta character :: 나만의 기록들](https://mine-it-record.tistory.com/309)
   - [replace / replaceFirst, Caused by: java.util.regex.PatternSyntaxException: Dangling meta character '?' near index 0](https://acet.tistory.com/291)
   - [자바 문자열 오류 - java.util.regex.PatternSyntaxException: Dangling meta character 해결](https://blog.naver.com/qbxlvnf11/221170503490)

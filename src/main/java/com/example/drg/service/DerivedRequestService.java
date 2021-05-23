@@ -50,11 +50,16 @@ public class DerivedRequestService {
 			// 저장할 원본 파일의 URL
 			String originUrl = derivedRequest.getOriginUrl();
 
-			// URL에서 원본 파일명 추출
-			String originFileName = Util.getFileNameFromUrl(originUrl);
-
 			// URL로 부터 원본 파일을 다운로드 후 경로를 담는다
 			String downloadedFilePath = Util.downloadFileByHttp(originUrl, App.getTmpDirPath());
+
+			// 경로에서 파일명 추출
+			String originFileName = Util.getFileNameFromUrl(originUrl);
+
+			// 파일명에 확장자가 없는 경우
+			if (originFileName.lastIndexOf(".") == -1) {
+				originFileName = Util.getFileNameFromPath(downloadedFilePath);
+			}
 
 			// 원본 파일 저장
 			fileService.save("derivedRequest", newDerivedRequestId, "common", "origin", 1, originFileName, downloadedFilePath);

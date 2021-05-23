@@ -4,8 +4,6 @@ import com.example.drg.dto.GenFile;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-
 @Mapper
 public interface GenFileDao {
 
@@ -19,5 +17,4 @@ public interface GenFileDao {
 
 	GenFile findGenFileByFileExtTypeCodeAndWidthAndHeight(String relTypeCode, int relId, String fileExtTypeCode, int width, int height);
 	GenFile findGenFileByFileExtTypeCodeAndMaxWidth(String relTypeCode, int relId, String fileExtTypeCode, int maxWidth);
-//	List<GenFile> findGenFileListByFileExtTypeCodeAndMaxWidth(String relTypeCode, List<Integer> relIds, String fileExtTypeCode, int maxWidth);
 }

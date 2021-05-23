@@ -1,7 +1,7 @@
 package com.example.drg.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.imgscalr.Scalr;
+import org.apache.tika.Tika;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 
@@ -179,11 +179,17 @@ public class Util {
 		return "etc";
 	}
 
-	/* 파일 이름에서 확장자 추출 */
+	/* 파일명에서 확장자 추출 */
 	public static String getFileExtFromFileName(String fileName) {
 		// newFile.jpg
 		int pos = fileName.lastIndexOf(".");
-		String ext = fileName.substring(pos + 1).toLowerCase(); // 소문자로
+
+		// 확장자가 없는 경우는 빈문자열 리턴
+		if (pos == -1) {
+			return "";
+		}
+
+		String ext = fileName.substring(pos + 1).trim().toLowerCase(); // 공백제거 및 소문자로
 
 		switch (ext) {
 			case "jpeg":
@@ -269,11 +275,6 @@ public class Util {
 		return size;
 	}
 
-	/* 경로에서 파일명 추출 */
-	public static String getFileNameFromPath(String filePath) {
-		return Paths.get(new File(filePath).getPath()).getFileName().toString();
-	}
-
 	/* 지정된 경로의 파일 삭제 */
 	public static boolean deleteFile(String filePath) {
 		File ioFile = new File(filePath);
@@ -346,7 +347,12 @@ public class Util {
 	 */
 	public static String downloadFileByHttp(String fileUrl, String outputDir) {
 		String originFileName = getFileNameFromUrl(fileUrl);
-		String newFileName = UUID.randomUUID() + "." + getFileExtFromFileName(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
+		String fileExt = getFileExtFromFileName(originFileName);
+
+		// 확장자가 없는 경우 일단 tmp 로
+		fileExt = fileExt.length() == 0 ? "tmp" : fileExt;
+
+		String newFileName = UUID.randomUUID() + "." +  fileExt;// 파일명은 랜덤하게 정하더라도 확장자는 유지
 		String filePath = outputDir + "/" + newFileName;
 
 		log.info("originFileName = " + originFileName);
@@ -364,7 +370,40 @@ public class Util {
 			return "";
 		}
 
+		// 파일 확장자가 tmp 로 처리된 경우, 파일의 메타데이터를 분석해 적절한 확장자로 처리
+		if (fileExt.equals("tmp")) {
+			// 생성된 tmp 파일의 확장자 추출
+			String newFileExt = getFileExt(new File(filePath));
+
+			// 확장자 변경
+			String newFilePath = filePath.replaceAll("\\.tmp", "\\." + newFileExt);
+			moveFile(filePath, newFilePath);
+			filePath = newFilePath;
+		}
+
 		return filePath;
+	}
+
+	// 존재하는 특정 파일의 미디어 타입을 분석해 확장자를 추출, Tika 활용
+	private static String getFileExt(File file) {
+		Tika tika = new Tika();
+		String mimeType = "";
+		try {
+			mimeType = tika.detect(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		String ext = mimeType.split("/")[1]; // 확장자에 해당하는 subtype 부분 추출
+
+		switch (ext) {
+			case "jpeg":
+				return "jpg"; // ext = ext.replace("jpeg", "jpg");
+			case "htm":
+				return "html";
+		}
+
+		return ext;
 	}
 
 	// URL에서 파일명 추출
@@ -375,6 +414,11 @@ public class Util {
 			e.printStackTrace();
 			return "";
 		}
+	}
+
+	/* 경로에서 파일명 추출 */
+	public static String getFileNameFromPath(String filePath) {
+		return Paths.get(new File(filePath).getPath()).getFileName().toString();
 	}
 
 	/*
@@ -528,9 +572,9 @@ public class Util {
 	}
 
 	/* [기본] 이미지 리사이징 & 크롭 (Using Imgscalr) */
-	public static void resizeImg(String filePath, String destFilePath, int width, int height) {
+	public static String resizeImg(String sourceFilePath, String destFilePath, int width, int height) {
 		try {
-			BufferedImage bufferedImage = ImageIO.read(new File(filePath));
+			BufferedImage bufferedImage = ImageIO.read(new File(sourceFilePath));
 
 			int originWidth = bufferedImage.getWidth();
 			int originHeight = bufferedImage.getHeight();
@@ -547,7 +591,7 @@ public class Util {
 			BufferedImage destBufferedImage = resize(cropedBufferedImage, Method.ULTRA_QUALITY, Mode.FIT_EXACT, width, height); // width, height 대로 정확히 변환
 			// BufferedImage destBufferedImage = resize(cropedBufferedImage, Method.ULTRA_QUALITY, Mode.AUTOMATIC, width, height); // Mode.AUTOMATIC => width, height 사이가 크게 차이날 경우, 큰 쪽에 맞춰 작은 쪽이 보정됨
 
-			String destFileExt = Util.getFileExtFromFileName(destFilePath); // 확장자 추출
+			String destFileExt = Util.getFileExtFromFileName(sourceFilePath); // 확장자 추출
 			FileOutputStream fileOutputStream = new FileOutputStream(destFilePath); // 스트림 열고 !! (비동기 쓰레드 처리)
 			ImageIO.write(destBufferedImage, destFileExt, fileOutputStream); // 쓰고 !!
 			fileOutputStream.close(); // 반드시 닫기!!
@@ -555,16 +599,18 @@ public class Util {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		return destFilePath;
 	}
 
 	/* 이미지 리사이징 & 크롭 (Using Imgscalr) - width 입력 시, height 자동 환산 */
-	public static void resizeImgWidth(String filePath, String destFilePath, int width) {
+	public static String resizeImgWidth(String sourceFilePath, String destFilePath, int width) {
 
 		// 지정된 높이(height)가 없으므로, 원본 종횡비 기준으로 산정
 		int height = 0;
 
 		try {
-			BufferedImage bufferedImage = ImageIO.read(new File(filePath));
+			BufferedImage bufferedImage = ImageIO.read(new File(sourceFilePath));
 
 			int originWidth = bufferedImage.getWidth();
 			int originHeight = bufferedImage.getHeight();
@@ -576,17 +622,17 @@ public class Util {
 			e.printStackTrace();
 		}
 
-		resizeImg(filePath, destFilePath, width, height);
+		return resizeImg(sourceFilePath, destFilePath, width, height);
 	}
 
 	/* 이미지 리사이징 & 크롭 (Using Imgscalr) - height 입력 시, width 자동 환산 */
-	public static void resizeImgHeight(String filePath, String destFilePath, int height) {
+	public static String resizeImgHeight(String sourceFilePath, String destFilePath, int height) {
 
 		// 지정된 너비(width)가 없으므로, 원본 종횡비 기준으로 산정
 		int width = 0;
 
 		try {
-			BufferedImage bufferedImage = ImageIO.read(new File(filePath));
+			BufferedImage bufferedImage = ImageIO.read(new File(sourceFilePath));
 
 			int originWidth = bufferedImage.getWidth();
 			int originHeight = bufferedImage.getHeight();
@@ -598,7 +644,7 @@ public class Util {
 			e.printStackTrace();
 		}
 
-		resizeImg(filePath, destFilePath, width, height);
+		return resizeImg(sourceFilePath, destFilePath, width, height);
 	}
 
 	/*public static void resizeImgTest(String filePath, String destFilePath, int width) {

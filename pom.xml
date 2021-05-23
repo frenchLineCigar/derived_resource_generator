@@ -82,6 +82,12 @@
 			<artifactId>imgscalr-lib</artifactId>
 			<version>4.2</version>
 		</dependency>
+		<!-- Apache Tika Core -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>1.26</version>
+		</dependency>
 	</dependencies>
 
 	<build>
