@@ -3,6 +3,17 @@
 
 ---
 
+[2021-05-18]
+
+ - [SPRING/JAVA] Spring MVC에서 IO 스트림을 처리하는 방법
+   - 컨트롤러에서 스트림 처리 끝낸 뒤, 직접 close() 호출해서 닫지 말 것
+   - 응답으로 나가기 전 닫으므로 `Stream closed.` 발생
+   - 이것이 자동적으로 처리되는 기본 클래스는 ResourceHttpMessageConverter이며 응답 처리를 끝낸 뒤 기본 입력 스트림을 알아서 닫아줌.
+   - [InputStream - How to handle IO streams in Spring MVC - Stack Overflow](https://stackoverflow.com/questions/48660011/how-to-handle-io-streams-in-spring-mvc/48660203#48660203)
+   - [InputStream is closed in spring controller - Stack Overflow](https://stackoverflow.com/questions/58079500/inputstream-is-closed-in-spring-controller)
+
+---
+
 [2021-05-17]
 
  - [JAVA/SPRING] 이미지 리사이즈 & 크롭

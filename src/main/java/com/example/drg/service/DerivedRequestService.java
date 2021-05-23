@@ -2,233 +2,199 @@ package com.example.drg.service;
 
 import com.example.drg.app.App;
 import com.example.drg.dao.DerivedRequestDao;
-import com.example.drg.dto.GenFile;
 import com.example.drg.dto.DerivedRequest;
+import com.example.drg.dto.GenFile;
 import com.example.drg.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class DerivedRequestService {
-    private final DerivedRequestDao derivedRequestDao;
-    private final GenFileService fileService;
 
-    public DerivedRequest getDerivedRequestByRequestUrl(String requestUrl) {
-        return derivedRequestDao.findDerivedRequestByRequestUrl(requestUrl);
-    }
+	private final DerivedRequestDao derivedRequestDao;
+	private final GenFileService fileService;
 
-    // 파생 리소스 저장
-    public void save(String requestUrl, String originUrl, Integer width, Integer height, Integer maxWidth) {
+	public DerivedRequest getDerivedRequestById(int id) {
+		return derivedRequestDao.findDerivedRequestById(id);
+	}
 
-        // 파생 요청 객체 생성
-        DerivedRequest newDerivedRequest = DerivedRequest.create(requestUrl, originUrl, width, height, maxWidth);
+	public DerivedRequest findDerivedRequestByRequestUrl(String requestUrl) {
+		return derivedRequestDao.findDerivedRequestByRequestUrl(requestUrl);
+	}
 
-        // 파생 요청 정보 저장
-        derivedRequestDao.saveMeta(newDerivedRequest);
+	public DerivedRequest findFirstDerivedRequestByOriginUrl(String originUrl) {
+		return derivedRequestDao.findFirstDerivedRequestByOriginUrl(originUrl);
+	}
 
-        // 요청받은 파일 저장, 중복 저장을 막는다
-        // originUrl 원본이 저장되어 있으면 기존 파일경로를, 없으면 다운로드 후 임시경로 리턴
-        String filePath = getFilePathOrDownloadByOriginUrl(originUrl);
+	public int save(DerivedRequest derivedRequest) {
 
-        // 파일이 임시경로에 있으면 신규 다운로드로 판단
-        boolean isNew = App.existsInTmpDir(filePath); // => filePath.contains(App.getTmpDirPath())
-        if (isNew) {
-            int newDerivedRequestId = newDerivedRequest.getId();
-            String originFileName = Util.getFileNameFromUrl(originUrl); // 파일명 추출
+		// 기존에 원본을 가지고 있는 요청이 있는지 조회
+		DerivedRequest originDerivedRequest = findFirstDerivedRequestByOriginUrl(derivedRequest.getOriginUrl());
 
-            // 파일 메타정보 저장 및 정식경로로 파일 이동
-            fileService.save("derivedRequest", newDerivedRequestId, "common", "origin", 1, originFileName, filePath);
-        }
-    }
+		if (originDerivedRequest == null) {
+			derivedRequest.setOriginStatus(true); // 원본을 저장하는 요청
+		}
 
-    // originUrl 원본파일이 생성된 최초 파생 요청
-    public DerivedRequest getOriginDerivedRequest(String originUrl) {
-        return derivedRequestDao.findFirstDerivedRequestByOriginUrl(originUrl);
-    }
+		// 1. 요청 정보 저장
+		derivedRequestDao.save(derivedRequest);
+		int newDerivedRequestId = derivedRequest.getId(); //생성된 요청 아이디
 
-    // originUrl 원본파일 조회
-    public GenFile getOriginGenFile(String originUrl) {
-        GenFile originGenFile = null;
+		// 2. 원본 파일 저장 (원본을 저장하는 요청의 경우)
+		if (derivedRequest.isOriginStatus()) {
 
-        DerivedRequest originDerivedRequest = getOriginDerivedRequest(originUrl); // originUrl 원본을 생성한 최초 파생 요청 조회
+			// 저장할 원본 파일의 URL
+			String originUrl = derivedRequest.getOriginUrl();
 
-        if (originDerivedRequest != null) {
-            originGenFile =  getOriginGenFileByOriginRequest(originDerivedRequest); // 해당 요청으로 저장된 원본파일 조회
-        }
+			// URL에서 원본 파일명 추출
+			String originFileName = Util.getFileNameFromUrl(originUrl);
 
-        return originGenFile;
-    }
+			// URL로 부터 원본 파일을 다운로드 후 경로를 담는다
+			String downloadedFilePath = Util.downloadFileByHttp(originUrl, App.getTmpDirPath());
 
-    // originUrl 원본파일 조회 (오버로딩)
-    public GenFile getOriginGenFile(DerivedRequest currentDerivedRequest) {
-        return getOriginGenFile(currentDerivedRequest.getOriginUrl());
-    }
+			// 원본 파일 저장
+			fileService.save("derivedRequest", newDerivedRequestId, "common", "origin", 1, originFileName, downloadedFilePath);
+		}
 
-    // originUrl 원본파일 조회 (쿼리 중복 방지)
-    public GenFile getOriginGenFileByOriginRequest(DerivedRequest originDerivedRequest) {
-        return fileService.getGenFile("derivedRequest", originDerivedRequest.getId(), "common", "origin", 1);
-    }
+		return newDerivedRequestId;
+	}
 
-    // originUrl 원본이 저장되어 있으면 해당 파일경로를, 없으면 다운로드 후 저장경로 리턴
-    public String getFilePathOrDownloadByOriginUrl(String originUrl) {
+	public GenFile getOriginGenFile(DerivedRequest derivedRequest) {
 
-        GenFile originGenFile = getOriginGenFile(originUrl); // originUrl 원본을 저장한 기존파일 조회
+		DerivedRequest originDerivedRequest = null;
 
-        if (originGenFile != null) {
-            return originGenFile.getFilePath(); // 있으면 해당 파일 경로 리턴
-        }
+		if (derivedRequest.isOriginStatus()) {
+			originDerivedRequest = derivedRequest;
+		} else  {
+			originDerivedRequest = findFirstDerivedRequestByOriginUrl(derivedRequest.getOriginUrl());
+		}
 
-        return Util.downloadFileByHttp(originUrl, App.getTmpDirPath()); // 없으면 originUrl 원본 다운로드 후 경로 리턴
-    }
+		return fileService.getGenFile("derivedRequest", originDerivedRequest.getId(), "common", "origin", 1);
+	}
 
-    // width, height 가 일치하는 이미지 조회, 없으면 생성 후 리턴
-    public GenFile getDerivedGenFileByWidthAndHeightOrMake(DerivedRequest derivedRequest, int width, int height) {
-        // width, height 가 일치하는 이미지 조회
-        GenFile derivedGenFile = getDerivedGenFileByWidthAndHeight(derivedRequest, width, height);
+	// 요청 크기의 이미지 조회, 없으면 생성
+	public GenFile getDerivedGenFileOrCreateIfNotExists(DerivedRequest derivedRequest) {
 
-        if (derivedGenFile != null) {
-            return derivedGenFile;
-        }
+		// 이미지 요구 사항
+		int width = derivedRequest.getWidth();
+		int height = derivedRequest.getHeight();
+		int maxWidth = derivedRequest.getMaxWidth();
 
-        // 없으면 너비가 width, 높이가 height 인 새로운 이미지 파일 생성
-	    return makeDerivedGenFileByWidthAndHeight(derivedRequest, width, height);
-    }
+		// 원본이 저장된 요청에서 일치하는 이미지가 저장돼있는지 먼저 찾고, 없으면 생성
+		if (! derivedRequest.isOriginStatus()) {
+			derivedRequest = findFirstDerivedRequestByOriginUrl(derivedRequest.getOriginUrl());
+		}
 
-	// width 가 일치하는 이미지 조회, 없으면 생성 후 리턴
-    public GenFile getDerivedGenFileByWidthOrMake(DerivedRequest derivedRequest, int width) {
-        // width 가 일치하는 이미지 조회
-        GenFile derivedGenFile = getDerivedGenFileByWidth(derivedRequest, width);
+		if (width > 0 && height > 0) {
+			return getDerivedGenFileByWidthAndHeightOrCreate(derivedRequest, width, height);
+		}
 
-        if (derivedGenFile != null) {
-            return derivedGenFile;
-        }
+		if (width > 0) {
+			return getDerivedGenFileByWidthOrCreate(derivedRequest, width);
+		}
 
-        // 없으면 너비가 width 인 새로운 이미지 파일 생성
-        return makeDerivedGenFileByWidth(derivedRequest, width);
-    }
+		if (maxWidth > 0) {
+			return getDerivedGenFileByMaxWidthOrCreate(derivedRequest, maxWidth);
+		}
 
-	// width 가 maxWidth 를 초과하지 않는 크기 중 가장 큰 이미지 조회, 없으면 생성 후 리턴
-    public GenFile getDerivedGenFileByMaxWidthOrMake(DerivedRequest derivedRequest, int maxWidth) {
+		return getOriginGenFile(derivedRequest);
+	}
 
-        // 너비가 maxWidth 를 초과하지 않는 크기 중 가장 큰 이미지 조회
-        GenFile derivedGenFile = getDerivedGenFileByMaxWidth(derivedRequest, maxWidth);
+	public void updateDerivedGenFileId(int newDerivedRequestId, int genFileId) {
+		derivedRequestDao.updateDerivedGenFileId(newDerivedRequestId, genFileId);
+	}
 
-        if (derivedGenFile != null) {
-            return derivedGenFile;
-        }
+	public GenFile getDerivedGenFileByWidthAndHeightOrCreate(DerivedRequest derivedRequest, int width, int height) {
 
-        // 없으면 너비가 maxWidth 인 새로운 이미지 파일 생성
-        return makeDerivedGenFileByWidth(derivedRequest, maxWidth);
-    }
+		GenFile derivedGenFile = getDerivedGenFileByWidthAndHeight(derivedRequest, width, height);
 
-    // width, height 가 일치하는 이미지 조회
-    private GenFile getDerivedGenFileByWidthAndHeight(DerivedRequest derivedRequest, int width, int height) {
+		if (derivedGenFile != null) {
+			return derivedGenFile;
+		}
 
-        // 지정한 width 와 height 크기로 이미지가 생성된 최초 파생 요청
-        DerivedRequest derivedRequestByWidthAndHeight = derivedRequestDao.findFirstDerivedRequestByWidthAndHeight(derivedRequest.getOriginUrl(), width, height);
+		return createDerivedGenFileByWidthAndHeight(derivedRequest, width, height);
+	}
 
-        // 해당 이미지 조회
-        return fileService.getGenFileByFileExtTypeCodeAndWidthAndHeight("derivedRequest", derivedRequestByWidthAndHeight.getId(), "img", width, height);
-    }
+	public GenFile getDerivedGenFileByWidthOrCreate(DerivedRequest derivedRequest, int width) {
 
-	// width 가 일치하는 이미지 조회
-    private GenFile getDerivedGenFileByWidth(DerivedRequest derivedRequest, int width) {
+		GenFile derivedGenFile = getDerivedGenFileByWidth(derivedRequest, width);
 
-        // 지정한 width 로 이미지가 생성된 최초 파생 요청
-        DerivedRequest derivedRequestByWidth = derivedRequestDao.findFirstDerivedRequestByWidthAndHeight(derivedRequest.getOriginUrl(), width, 0); // 특정 height 가 지정되지 않을 경우(원본 비율이 유지된 경우)에 height 는 0
+		if (derivedGenFile != null) {
+			return derivedGenFile;
+		}
 
-        // height 가 없으므로 원본 비율을 기준으로 산정해 파일을 조회한다 (원본 비율이 유지된 결과를 조회하기 위함)
-        GenFile originGenFile = getOriginGenFile(derivedRequest.getOriginUrl());
-        int originWidth = originGenFile.getWidth();
-        int originHeight = originGenFile.getHeight();
-        int height = width * originHeight / originWidth;
+		return createDerivedGenFileByWidthAndHeight(derivedRequest, width, 0);
+	}
 
-        // 해당 이미지 조회
-        return fileService.getGenFileByFileExtTypeCodeAndWidthAndHeight("derivedRequest", derivedRequestByWidth.getId(), "img", width, height);
-    }
+	public GenFile getDerivedGenFileByMaxWidthOrCreate(DerivedRequest derivedRequest, int maxWidth) {
 
-    // width 가 maxWidth 이하의 크기 중 가장 큰 이미지 조회
-    private GenFile getDerivedGenFileByMaxWidth(DerivedRequest derivedRequest, int maxWidth) {
+		GenFile derivedGenFile = getDerivedGenFileByMaxWidth(derivedRequest, maxWidth);
 
-        // width 가 maxWidth 이하의 크기 중, 가장 큰 width 의 이미지가 생성된 최초 파생 요청
-        DerivedRequest derivedRequestByMaxWidth = derivedRequestDao.findFirstDerivedRequestByMaxWidth(derivedRequest.getOriginUrl(), maxWidth);
+		if (derivedGenFile != null) {
+			return derivedGenFile;
+		}
 
-        return fileService.getGenFileByFileExtTypeCodeAndMaxWidth("derivedRequest", derivedRequestByMaxWidth.getId(), "img", maxWidth);
-    }
+		return createDerivedGenFileByWidthAndHeight(derivedRequest, maxWidth, 0);
+	}
 
-//    // width 가 maxWidth 이하의 크기 중 가장 큰 이미지 조회
-//    private GenFile getDerivedGenFileByMaxWidth(DerivedRequest derivedRequest, int maxWidth) {
-//
-//        // 결과를 담을 변수
-//        GenFile derivedGenFile = null;
-//
-//        // width 가 maxWidth 이하인 모든 이미지 파생 요청
-//        List<Integer> derivedRequestIds =
-//                derivedRequestDao.findDerivedRequestListByMaxWidth(derivedRequest.getOriginUrl(), maxWidth).stream()
-//                        .filter(request -> request.getHeight() == 0) // 원본비율이 유지된 경우만(특정 height 가 지정되지 않은 경우)
-//                        .map(DerivedRequest::getId) // 아이디만 추출
-//                        .collect(Collectors.toList());
-//
-//        if (! derivedRequestIds.isEmpty()) {
-//
-//            // 일치하는 이미지 조회 결과
-//            List<GenFile> derivedGenFileList = fileService.getGenFileListByFileExtTypeCodeAndMaxWidth("derivedRequest", derivedRequestIds, "img", maxWidth);
-//
-//            // 결과 중 가장 큰 width 이미지
-//            derivedGenFile = derivedGenFileList.stream()
-//                    .max(Comparator.comparingInt(GenFile::getWidth)) //가장 큰 width 찾기
-//                    .orElse(null);
-//        }
-//
-//        return derivedGenFile;
-//    }
+	private GenFile getDerivedGenFileByWidthAndHeight(DerivedRequest derivedRequest, int width, int height) {
 
-    // 지정한 width, height 로 변환한 이미지 파일 생성 및 저장 (크롭 & 리사이징)
-    private GenFile makeDerivedGenFileByWidthAndHeight(DerivedRequest derivedRequest, int width, int height) {
+		return fileService.getGenFileByFileExtTypeCodeAndWidthAndHeight("derivedRequest", derivedRequest.getId(), "img", width, height);
+	}
 
-        // 저장된 원본 파일 조회
-        GenFile originGenFile = getOriginGenFile(derivedRequest);
+	private GenFile getDerivedGenFileByWidth(DerivedRequest derivedRequest, int width) {
 
-        // 파생 요청으로 생성된 파일이 저장될 임시경로
-        String destFilePath = App.getNewTmpFilePath(originGenFile.getFileExt());
+		// 지정된 높이(height)가 없으므로, 원본 종횡비 기준으로 높이 산정 (원본 비율이 유지된 파일로 조회)
+		GenFile originGenFile = getOriginGenFile(derivedRequest);
+		int originWidth = originGenFile.getWidth();
+		int originHeight = originGenFile.getHeight();
+		int height = width * originHeight / originWidth;
 
-        // 요구사항에 맞게 리사이징
-        Util.resizeImg(originGenFile.getFilePath(), destFilePath, width, height);
+		return getDerivedGenFileByWidthAndHeight(derivedRequest, width, height);
+	}
 
-        // 파일 저장
-        int newGenFileId = fileService.save("derivedRequest", derivedRequest.getId(), "common", "derived", 0, originGenFile.getOriginFileName(), destFilePath);
+	private GenFile getDerivedGenFileByMaxWidth(DerivedRequest derivedRequest, int maxWidth) {
 
-        // 파일 정보 리턴
-        return fileService.getGenFileById(newGenFileId);
-    }
+		GenFile originGenFile = getOriginGenFile(derivedRequest);
+		int originWidth = originGenFile.getWidth();
+		int originHeight = originGenFile.getHeight();
+		int height = maxWidth * originHeight / originWidth;
 
-    // 지정한 width 로 변환한 이미지 파일 생성 및 저장 (크롭 & 리사이징)
-    private GenFile makeDerivedGenFileByWidth(DerivedRequest derivedRequest, int width) {
+		if (originWidth <= maxWidth) { // 원본 너비가 maxWidth 이하면 원본 리턴
+			return originGenFile;
+		}
 
-        GenFile originGenFile = getOriginGenFile(derivedRequest);
+		return getDerivedGenFileByWidthAndHeight(derivedRequest, maxWidth, height);
+	}
 
-        String destFilePath = App.getNewTmpFilePath(originGenFile.getFileExt());
+	private GenFile createDerivedGenFileByWidthAndHeight(DerivedRequest derivedRequest, int width, int height) {
 
-        // 지정된 높이(height)가 없으므로, 원본 종횡비 기준으로 산정
-        // originWidth / originHeight == width / height
-        int originWidth = originGenFile.getWidth(); // 원본 실제 너비
-        int originHeight = originGenFile.getHeight(); // 원본 실제 높이
-        int height = originHeight * width / originWidth; // 비율에 맞게 산정된 높이
+		// 저장된 원본 파일 가져오기
+		GenFile originGenFile = getOriginGenFile(derivedRequest);
 
-        Util.resizeImg(originGenFile.getFilePath(), destFilePath, width, height);
+		// 리사이징한 파일이 저장될 임시경로
+		String resizedFilePath = App.getNewTmpFilePath(originGenFile.getFileExt());
 
-        int newGenFileId = fileService.save("derivedRequest", derivedRequest.getId(), "common", "derived", 0, originGenFile.getOriginFileName(), destFilePath);
+		// 지정된 높이(height)가 없는 경우, 원본 종횡비 기준으로 높이 산정
+		if (height == 0) {
+			// originWidth / originHeight == width / height
+			int originWidth = originGenFile.getWidth(); // 원본 너비
+			int originHeight = originGenFile.getHeight(); // 원본 높이
+			height = originHeight * width / originWidth; // 산정된 높이
+		}
 
-        return fileService.getGenFileById(newGenFileId);
-    }
+		// 요구사항에 맞게 리사이징
+		Util.resizeImg(originGenFile.getFilePath(), resizedFilePath, width, height);
+
+		// 리사이징한 파일 정보 등록 및 저장
+		int newGenFileId = fileService.save("derivedRequest", derivedRequest.getId(), "common", "derived", 0, originGenFile.getOriginFileName(), resizedFilePath);
+
+		// 저장된 파일 정보 리턴
+		return fileService.getGenFileById(newGenFileId);
+	}
 
 }

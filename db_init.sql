@@ -62,3 +62,15 @@ ALTER TABLE derivedrequest
 CHANGE `url` `requestUrl` CHAR(200) CHARSET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
 DROP INDEX `url`,
 ADD UNIQUE INDEX `requestUrl` (`requestUrl`) VISIBLE;
+
+# derivedRequest 테이블에 originStatus 칼럼 추가
+ALTER TABLE derivedRequest
+ADD COLUMN `originStatus` TINYINT(1) UNSIGNED DEFAULT 0 NOT NULL
+COMMENT '원본 파일이 이미 저장된 요청인지 여부'
+AFTER `originUrl`;
+
+# 관련된 파일 번호 칼럼 추가
+ALTER TABLE derivedRequest
+ADD COLUMN `genFileId` INT(1) UNSIGNED DEFAULT 0 NOT NULL
+COMMENT '요청으로 저장된 파일 번호'
+AFTER `originUrl`;

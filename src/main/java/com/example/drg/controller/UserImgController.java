@@ -1,10 +1,9 @@
 package com.example.drg.controller;
 
-import com.example.drg.dto.GenFile;
 import com.example.drg.dto.DerivedRequest;
-import com.example.drg.service.GenFileService;
+import com.example.drg.dto.GenFile;
 import com.example.drg.service.DerivedRequestService;
-import com.example.drg.util.Util;
+import com.example.drg.service.GenFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
@@ -14,14 +13,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -32,45 +29,32 @@ public class UserImgController {
     private final DerivedRequestService derivedRequestService;
     private final GenFileService fileService;
 
-    /* 이미지 파생 */
+    /* 요청에 알맞는 이미지 파생 후 결과를 보여준다 */
     @RequestMapping("/img")
-    public ResponseEntity<Resource> showImg(HttpServletRequest req, @RequestParam Map<String, Object> param, @RequestParam("url") String originUrl) {
-        String currentUrl = Util.getUrlFromHttpServletRequest(req); // 현재 요청 url
+    public ResponseEntity<Resource> showImg(HttpServletRequest req, DerivedRequest derivedRequest) {
 
-        // 현재 요청(currentUrl)과 완전히 일치하는 기존 요청이 있었는지 조회
-        DerivedRequest derivedRequest = derivedRequestService.getDerivedRequestByRequestUrl(currentUrl);
+        // 현재 요청(requestUrl)과 동일한 기존 요청이 있었는지 조회
+        DerivedRequest existing = derivedRequestService.findDerivedRequestByRequestUrl(derivedRequest.getRequestUrl());
 
-        if (derivedRequest == null) {
-            int width = Util.getAsInt(param.get("width"), 0);
-            int height = Util.getAsInt(param.get("height"), 0);
-            int maxWidth = Util.getAsInt(param.get("maxWidth"), 0);
+        if (existing == null) {
 
-            derivedRequestService.save(currentUrl, originUrl, width, height, maxWidth); // 파생 리소스 저장
-            derivedRequest = derivedRequestService.getDerivedRequestByRequestUrl(currentUrl); // 재조회후 결과 갱신
-        }
+            // 현재 요청 저장
+            int newDerivedRequestId = derivedRequestService.save(derivedRequest);
 
-        // 클라이언트 요구 사항
-        int width = derivedRequest.getWidth(); // 요청 너비
-        int height = derivedRequest.getHeight(); // 요청 높이
-        int maxWidth = derivedRequest.getMaxWidth(); // 요청 최대너비
+            // 재조회
+            DerivedRequest newDerivedRequest = derivedRequestService.getDerivedRequestById(newDerivedRequestId);
 
-        // 요구사항에 맞는 이미지로 가공
-        if ( width > 0 && height > 0 ) { // 너비, 높이 둘 다 있는 경우 (너비 지정 시 최대너비 무시)
-            GenFile derivedGenFile = derivedRequestService.getDerivedGenFileByWidthAndHeightOrMake(derivedRequest, width, height);
+            // 현재 요청에 알맞는 파일 찾기, 없으면 생성
+            GenFile derivedGenFile = derivedRequestService.getDerivedGenFileOrCreateIfNotExists(newDerivedRequest);
+
+            // 현재 요청과 연관된 파일 아이디로 갱신
+            derivedRequestService.updateDerivedGenFileId(newDerivedRequest.getId(), derivedGenFile.getId());
+
             return getClientCachedResponseEntity(derivedGenFile, req);
         }
-        else if ( width > 0 ) { // 너비만 있는 경우
-            GenFile derivedGenFile = derivedRequestService.getDerivedGenFileByWidthOrMake(derivedRequest, width);
-            return getClientCachedResponseEntity(derivedGenFile, req);
-        }
-        else if ( maxWidth > 0 ) { // 최대너비만 있는 경우
-            GenFile derivedGenFile = derivedRequestService.getDerivedGenFileByMaxWidthOrMake(derivedRequest, maxWidth);
-            return getClientCachedResponseEntity(derivedGenFile, req);
-        }
-        else { // 그 밖의 경우는 원본 리턴
-            GenFile originGenFile = derivedRequestService.getOriginGenFile(derivedRequest.getOriginUrl());
-            return getClientCachedResponseEntity(originGenFile, req);
-        }
+
+        GenFile originGenFile = fileService.getGenFileById(existing.getGenFileId());
+        return getClientCachedResponseEntity(originGenFile, req);
     }
 
     // 아이디로 이미지 조회후 보여주기

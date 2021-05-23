@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -78,7 +77,7 @@ public class GenFileService {
 		int newGenFileId = genFile.getId();
 		String destFilePath = genFile.getFilePath();
 
-		// 파일 저장
+		// 파일 저장, 다운로드한 파일을 정식 경로로 이동
 		saveOnDisk(filePath, destFilePath);
 
 		return newGenFileId;

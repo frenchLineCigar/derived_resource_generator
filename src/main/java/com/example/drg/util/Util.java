@@ -346,7 +346,7 @@ public class Util {
 	 */
 	public static String downloadFileByHttp(String fileUrl, String outputDir) {
 		String originFileName = getFileNameFromUrl(fileUrl);
-		String newFileName = UUID.randomUUID() + "." + getFileExt(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
+		String newFileName = UUID.randomUUID() + "." + getFileExtFromFileName(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
 		String filePath = outputDir + "/" + newFileName;
 
 		log.info("originFileName = " + originFileName);
@@ -377,20 +377,12 @@ public class Util {
 		}
 	}
 
-	// 파일명에서 확장자 추출
-	public static String getFileExt(String fileName) {
-		int pos = fileName.lastIndexOf(".");
-		String ext = fileName.substring(pos + 1);
-
-		return ext;
-	}
-
 	/*
 		Downloader v2 : Using Java IO
 	 */
 	public static String downloadFileByHttpV2(String fileUrl, String outputDir) {
 		String originFileName = getFileNameFromUrlV2(fileUrl);
-		String newFileName = UUID.randomUUID() + "." + getFileExt(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
+		String newFileName = UUID.randomUUID() + "." + getFileExtFromFileName(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
 		String filePath = outputDir + "/" + newFileName;
 		// String filePath = new File(outputDir, newFileName).getPath();
 		// String filePath = Paths.get(outputDir, newFileName).toString();
@@ -486,7 +478,7 @@ public class Util {
 					originFileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
 				}
 
-				String newFileName = UUID.randomUUID() + "." + getFileExt(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
+				String newFileName = UUID.randomUUID() + "." + getFileExtFromFileName(originFileName); // 파일명은 랜덤하게 정하더라도 확장자는 유지
 				File file = new File(outputDir, newFileName);
 				filePath = file.getPath();
 
@@ -555,7 +547,7 @@ public class Util {
 			BufferedImage destBufferedImage = resize(cropedBufferedImage, Method.ULTRA_QUALITY, Mode.FIT_EXACT, width, height); // width, height 대로 정확히 변환
 			// BufferedImage destBufferedImage = resize(cropedBufferedImage, Method.ULTRA_QUALITY, Mode.AUTOMATIC, width, height); // Mode.AUTOMATIC => width, height 사이가 크게 차이날 경우, 큰 쪽에 맞춰 작은 쪽이 보정됨
 
-			String destFileExt = Util.getFileExt(destFilePath); // 확장자 추출
+			String destFileExt = Util.getFileExtFromFileName(destFilePath); // 확장자 추출
 			FileOutputStream fileOutputStream = new FileOutputStream(destFilePath); // 스트림 열고 !! (비동기 쓰레드 처리)
 			ImageIO.write(destBufferedImage, destFileExt, fileOutputStream); // 쓰고 !!
 			fileOutputStream.close(); // 반드시 닫기!!
