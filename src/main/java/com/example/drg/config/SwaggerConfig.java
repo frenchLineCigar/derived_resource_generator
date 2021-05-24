@@ -27,13 +27,12 @@ public class SwaggerConfig {
 
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder()
-				.title("Derived Resource Generator API")
-				.version("1.0")
-				.description("파생 리소스 생성기 API Docs")
+				.title("이미지 파생 서비스")
+				.description("URL의 이미지를 원하는 크기로 변환해 제공합니다.")
+				.version("0.1")
 				.termsOfServiceUrl("https://www.example.com")
-				.contact(new Contact("Contact Me", "https://www.example.com", "admin@email.com"))
-				.license("API Licence")
-				.licenseUrl("http://www.example.com")
+				.license("API Licence").licenseUrl("http://www.example.com/license")
+				.contact(new Contact("제작자", "https://www.example.com/contact", "admin@email.com"))
 				.build();
 	}
 } 

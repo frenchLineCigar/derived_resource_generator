@@ -34,10 +34,10 @@ public class UserImgController {
 
     /* 요청에 알맞는 이미지 파생 후 결과를 보여준다 */
     @GetMapping("/img")
-    @ApiOperation(value = "이미지 출력", notes = "입력 받은 정보에 해당하는 이미지를 조회 또는 신규 저장 후 해당 크기로 결과를 출력합니다.")
+    @ApiOperation(value = "이미지 변환", notes = "URL에 해당하는 이미지를 입력한 크기로 변환된 이미지로 제공합니다.")
     public ResponseEntity<Resource> showImg(HttpServletRequest req,
                                             @ApiParam(hidden = true) @RequestURL String requestUrl,
-                                            @ApiParam(value = "이미지 파일 URL") @RequestParam("url") String originUrl,
+                                            @ApiParam(value = "이미지 URL") @RequestParam("url") String originUrl,
                                             @ApiParam(value = "원하는 출력 너비") @RequestParam(defaultValue = "0", required = false) int width,
                                             @ApiParam(value = "원하는 출력 높이") @RequestParam(defaultValue = "0", required = false) int height,
                                             @ApiParam(value = "원하는 출력 최대너비") @RequestParam(defaultValue = "0", required = false) int maxWidth) {
