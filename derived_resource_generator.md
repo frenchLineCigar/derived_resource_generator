@@ -4,6 +4,19 @@
 ---
 
 [2021-05-23]
+
+ - [Spring/Java] UTF-8 Character Encoding Filter 설정
+   - 두 가지 방법이 있다.
+   - 하나는 JavaConfig 로 직접 인코딩 Filter Bean 을 등록, 다른 하나는 스프링 properties 에서 제공하는 속성으로 간편하게 설정(deprecated 됨)
+   - [CharacterEncodingFilter In SpringBoot](https://www.baeldung.com/spring-boot-characterencodingfilter)
+     - [tutorials/CharacterEncodingDemo.java at 950bbadc353bdca114befc98cf4a18476352220e · eugenp/tutorials · GitHub](https://github.com/eugenp/tutorials/blob/950bbadc353bdca114befc98cf4a18476352220e/spring-boot-modules/spring-boot-mvc-3/src/main/java/com/baeldung/charencoding/CharacterEncodingDemo.java)
+   - [SpringBoot utf8 설정](https://handcoding.tistory.com/156)
+   - [Spring boot 에서 Filter 사용하기 - 가리사니](https://gs.saro.me/dev?tn=503)
+   - [spring boot filter추가](https://velog.io/@shson/spring-boot-filter%EC%B6%94%EA%B0%80)
+
+---
+
+[2021-05-23]
  
  - [Spring/Java] springfox 3.0 (swagger2)
    - [[Springboot] springfox-swagger 3.0.0 example](https://log-laboratory.tistory.com/347)
@@ -12,7 +25,8 @@
 
    
  - [Spring/Java] 특정 애노테이션 유무로 HandlerMethodArgumentResolver 적용
-   - [스프링 MVC 커스텀 HandlerMethodArgumentResolver 사용하기 :: 자바캔(Java Can Do IT)](https://javacan.tistory.com/entry/how-use-spring-mvc-custom-HandlerMethodArgumentResolver) 
+   - [[Spring] HandlerMethodArgumentResolver 사용하여 Custom Annotation 구현 및 테스트하기](https://sanghye.tistory.com/41)
+   - [스프링 MVC 커스텀 HandlerMethodArgumentResolver 사용하기 :: 자바캔(Java Can Do IT)](https://javacan.tistory.com/entry/how-use-spring-mvc-custom-HandlerMethodArgumentResolver)
    
 ---
 

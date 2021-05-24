@@ -1,6 +1,6 @@
 package com.example.drg.resolver;
 
-import com.example.drg.annotation.RequestURL;
+import com.example.drg.annotation.RequestUrl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
@@ -13,13 +13,14 @@ import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @Component
-public class RequestURLArgumentResolver implements HandlerMethodArgumentResolver {
+public class RequestUrlArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         //GetMapping methodAnnotation = parameter.getMethodAnnotation(GetMapping.class);
-        RequestURL parameterAnnotation = parameter.getParameterAnnotation(RequestURL.class);
+        RequestUrl parameterAnnotation = parameter.getParameterAnnotation(RequestUrl.class);
+        String parameterName = parameter.getParameterName();
 
-        return parameterAnnotation != null && "requestUrl".equals(parameter.getParameterName());
+        return parameterAnnotation != null && "requestUrl".equals(parameterName);
     }
 
     @Override
