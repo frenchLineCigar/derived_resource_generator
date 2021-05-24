@@ -1,12 +1,9 @@
 package com.example.drg.resolver;
 
 import com.example.drg.annotation.OriginUrl;
-import com.example.drg.annotation.RequestUrl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -19,25 +16,22 @@ import javax.servlet.http.HttpServletRequest;
 public class OriginUrlArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        OriginUrl parameterAnnotation = parameter.getParameterAnnotation(OriginUrl.class);
-        String parameterName = parameter.getParameterName();
-
-        return parameterAnnotation != null && "originUrl".equals(parameterName);
+        return parameter.hasParameterAnnotation(OriginUrl.class);
     }
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         HttpServletRequest req = (HttpServletRequest) webRequest.getNativeRequest();
-        String requestUrl = req.getRequestURI() + "?" + req.getQueryString();
+        String queryString = req.getQueryString();
 
-        String originUrl = getOriginUrl(requestUrl); // 이미지 URL
+        String originUrl = getOriginUrl(queryString); // 이미지 URL
 
         return originUrl;
     }
 
-    private String getOriginUrl(String requestUrl) {
+    private String getOriginUrl(String queryString) {
 
-        String originUrl = requestUrl.split("url=")[1];
+        String originUrl = queryString.split("url=")[1];
 
         boolean discriminator = originUrl.contains("&width") || originUrl.contains("&height") || originUrl.contains("&maxWidth");
 

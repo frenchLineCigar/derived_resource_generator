@@ -16,11 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestUrlArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        //GetMapping methodAnnotation = parameter.getMethodAnnotation(GetMapping.class);
-        RequestUrl parameterAnnotation = parameter.getParameterAnnotation(RequestUrl.class);
-        String parameterName = parameter.getParameterName();
-
-        return parameterAnnotation != null && "requestUrl".equals(parameterName);
+        return parameter.hasParameterAnnotation(RequestUrl.class);
     }
 
     @Override
