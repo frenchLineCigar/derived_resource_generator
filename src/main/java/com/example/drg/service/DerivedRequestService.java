@@ -31,10 +31,13 @@ public class DerivedRequestService {
 		return derivedRequestDao.findFirstDerivedRequestByOriginUrl(originUrl);
 	}
 
-	public int save(DerivedRequest derivedRequest) {
+	public int save(String requestUrl, String originUrl, int width, int height, int maxWidth) {
+
+		// 저장할 객체 생성
+		DerivedRequest derivedRequest = DerivedRequest.create(requestUrl, originUrl, false, width, height, maxWidth);
 
 		// 기존에 원본을 가지고 있는 요청이 있는지 조회
-		DerivedRequest originDerivedRequest = findFirstDerivedRequestByOriginUrl(derivedRequest.getOriginUrl());
+		DerivedRequest originDerivedRequest = findFirstDerivedRequestByOriginUrl(originUrl);
 
 		if (originDerivedRequest == null) {
 			derivedRequest.setOriginStatus(true); // 원본을 저장하는 요청
@@ -46,9 +49,6 @@ public class DerivedRequestService {
 
 		// 2. 원본 파일 저장 (원본을 저장하는 요청의 경우)
 		if (derivedRequest.isOriginStatus()) {
-
-			// 저장할 원본 파일의 URL
-			String originUrl = derivedRequest.getOriginUrl();
 
 			// URL로 부터 원본 파일을 다운로드 후 경로를 담는다
 			String downloadedFilePath = Util.downloadFileByHttp(originUrl, App.getTmpDirPath());

@@ -1,5 +1,19 @@
 # TIL
 
+
+---
+
+[2021-05-23]
+ 
+ - [Spring/Java] springfox 3.0 (swagger2)
+   - [[Springboot] springfox-swagger 3.0.0 example](https://log-laboratory.tistory.com/347)
+   - [Spring Boot](https://gaemi606.tistory.com/entry/Spring-Boot-Swagger2-%EC%82%AC%EC%9A%A9-springfox-boot-starter300)
+   - [java-swagger-ui-3.0-사용하기 - Deliwind](https://blog2.deliwind.com/20201127/java-swagger-ui-3-0-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0/)
+
+   
+ - [Spring/Java] 특정 애노테이션 유무로 HandlerMethodArgumentResolver 적용
+   - [스프링 MVC 커스텀 HandlerMethodArgumentResolver 사용하기 :: 자바캔(Java Can Do IT)](https://javacan.tistory.com/entry/how-use-spring-mvc-custom-HandlerMethodArgumentResolver) 
+   
 ---
 
 [2021-05-22]

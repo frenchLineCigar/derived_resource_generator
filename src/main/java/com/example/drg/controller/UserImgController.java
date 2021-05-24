@@ -1,9 +1,12 @@
 package com.example.drg.controller;
 
+import com.example.drg.annotation.RequestURL;
 import com.example.drg.dto.DerivedRequest;
 import com.example.drg.dto.GenFile;
 import com.example.drg.service.DerivedRequestService;
 import com.example.drg.service.GenFileService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.InputStreamResource;
@@ -12,7 +15,7 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -30,16 +33,22 @@ public class UserImgController {
     private final GenFileService fileService;
 
     /* 요청에 알맞는 이미지 파생 후 결과를 보여준다 */
-    @RequestMapping("/img")
-    public ResponseEntity<Resource> showImg(HttpServletRequest req, DerivedRequest derivedRequest) {
+    @GetMapping("/img")
+    @ApiOperation(value = "이미지 출력", notes = "입력 받은 정보에 해당하는 이미지를 조회 또는 신규 저장 후 해당 크기로 결과를 출력합니다.")
+    public ResponseEntity<Resource> showImg(HttpServletRequest req,
+                                            @ApiParam(hidden = true) @RequestURL String requestUrl,
+                                            @ApiParam(value = "이미지 파일 URL") @RequestParam("url") String originUrl,
+                                            @ApiParam(value = "원하는 출력 너비") @RequestParam(defaultValue = "0", required = false) int width,
+                                            @ApiParam(value = "원하는 출력 높이") @RequestParam(defaultValue = "0", required = false) int height,
+                                            @ApiParam(value = "원하는 출력 최대너비") @RequestParam(defaultValue = "0", required = false) int maxWidth) {
 
         // 현재 요청(requestUrl)과 동일한 기존 요청이 있었는지 조회
-        DerivedRequest existing = derivedRequestService.findDerivedRequestByRequestUrl(derivedRequest.getRequestUrl());
+        DerivedRequest existing = derivedRequestService.findDerivedRequestByRequestUrl(requestUrl);
 
         if (existing == null) {
 
             // 현재 요청 저장
-            int newDerivedRequestId = derivedRequestService.save(derivedRequest);
+            int newDerivedRequestId = derivedRequestService.save(requestUrl, originUrl, width, height, maxWidth);
 
             // 재조회
             DerivedRequest newDerivedRequest = derivedRequestService.getDerivedRequestById(newDerivedRequestId);
@@ -57,9 +66,10 @@ public class UserImgController {
         return getClientCachedResponseEntity(originGenFile, req);
     }
 
-    // 아이디로 이미지 조회후 보여주기
     @GetMapping("/imgById")
-    public ResponseEntity<Resource> showImgById(int id, HttpServletRequest req) {
+    @ApiOperation(value = "이미지 번호로 이미지 출력", notes = "입력 받은 id에 해당하는 이미지를 출력합니다.")
+    public ResponseEntity<Resource> showImgById(HttpServletRequest req,
+                                                @ApiParam(value = "이미지 파일의 id") @RequestParam(required = true) int id) {
         // 아이디로 파일 조회
         GenFile genFile = fileService.getGenFileById(id);
         return getClientCachedResponseEntity(genFile, req);

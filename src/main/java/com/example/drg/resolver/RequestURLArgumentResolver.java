@@ -1,6 +1,7 @@
-package com.example.drg.dto;
+package com.example.drg.resolver;
 
-import com.example.drg.util.Util;
+import com.example.drg.annotation.RequestURL;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -10,11 +11,15 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
 
+@Slf4j
 @Component
-public class DerivedRequestArgumentResolver implements HandlerMethodArgumentResolver {
+public class RequestURLArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return DerivedRequest.class.isAssignableFrom(parameter.getParameterType());
+        //GetMapping methodAnnotation = parameter.getMethodAnnotation(GetMapping.class);
+        RequestURL parameterAnnotation = parameter.getParameterAnnotation(RequestURL.class);
+
+        return parameterAnnotation != null && "requestUrl".equals(parameter.getParameterName());
     }
 
     @Override
@@ -22,12 +27,7 @@ public class DerivedRequestArgumentResolver implements HandlerMethodArgumentReso
         HttpServletRequest req = (HttpServletRequest) webRequest.getNativeRequest();
 
         String requestUrl = req.getRequestURI() + "?" + req.getQueryString(); // 현재 요청 url
-        String originUrl = req.getParameter("url"); // 파일 url
 
-        int width = Util.getAsInt(req.getParameter("width"), 0);
-        int height = Util.getAsInt(req.getParameter("height"), 0);
-        int maxWidth = Util.getAsInt(req.getParameter("maxWidth"), 0);
-
-        return DerivedRequest.create(requestUrl, originUrl, false, width, height, maxWidth);
+        return requestUrl;
     }
 }

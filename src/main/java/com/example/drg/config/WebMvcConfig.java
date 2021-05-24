@@ -1,6 +1,6 @@
 package com.example.drg.config;
 
-import com.example.drg.dto.DerivedRequestArgumentResolver;
+import com.example.drg.resolver.RequestURLArgumentResolver;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +18,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private String genFileDirPath;
 
     @Autowired
-    DerivedRequestArgumentResolver derivedRequestArgumentResolver;
+    RequestURLArgumentResolver requestURLArgumentResolver;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(derivedRequestArgumentResolver);
+        resolvers.add(requestURLArgumentResolver);
     }
 
 }
