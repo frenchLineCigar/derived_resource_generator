@@ -2,6 +2,10 @@
 
 [2021-05-27]
 
+ - [Tomcat/Servlet Container] 쿼리 스트링 특수문자 완화 : The valid characters are defined in RFC 7230 and RFC 3986
+   - [[ERROR] Invalid character found in the request target. The valid characters are defined in RFC 7230 and RFC 3986 · 기억하기 위한 개발노트](http://jmlim.github.io/java/2019/10/14/characters-are-defined-in-rfc-7230-and-rfc-3986/)
+   - [[Tomcat] java.lang.IllegalArgumentException: Invalid character found in the request target. The valid characters are defined in RFC 7230 and RFC 3986 - 따시! 먹고 살겠다고..](https://ddasi-live.tistory.com/17)
+
  - [HTTP] 리다이렉트 시 301, 302, 303 Status Code / SEO 영향
    - 301 vs 302 : 기본적으로 클라이언트 캐시 탐
      - 301 : 절루 가! 영원히 오지마, 다신 절대 찾아오지마 (브라우저가 한번 퇴짜를 맡은 걸 잊지않고 영원히 기억함)
