@@ -1,5 +1,26 @@
 # TIL
 
+[2021-05-27]
+
+ - [HTTP] 리다이렉트 시 301, 302, 303 Status Code / SEO 영향
+   - 301 vs 302 : 기본적으로 클라이언트 캐시 탐
+     - 301 : 절루 가! 영원히 오지마, 다신 절대 찾아오지마 (브라우저가 한번 퇴짜를 맡은 걸 잊지않고 영원히 기억함)
+     - 302 : 잠깐 일루 가
+     - [[HTTP] 301과 302 Redirect의 차이](https://nsinc.tistory.com/168)
+   - 303 사용 시 : 기본적으로 클라이언트 캐시 회피 (Cache-Control 헤더를 별도로 주면 그땐 캐시 탐)
+     - [HTTP 상태 코드 301에서 303을 이용한 Location 헤더의 브라우저 캐시 회피하기](https://cherrypick.co.kr/avoid-location-header-cache-in-brower-using-303-http-code/)
+   - 301 vs 308
+     - [301 Moved Permanently - HTTP](https://developer.mozilla.org/ko/docs/Web/HTTP/Status/301)
+     - [308 Permanent Redirect - HTTP](https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/308)
+   - 302 vs 307
+     - [302 Found (Moving Temporarily) - HTTP](https://developer.mozilla.org/ko/docs/Web/HTTP/Status/302)
+     - [307 Temporary Redirect - HTTP](https://developer.mozilla.org/ko/docs/Web/HTTP/Status/307)
+   - 종합
+     - [Http 응답 상태코드 (Http Status Code)](https://sgoho01.tistory.com/8)
+     - [HTTP 상태 코드](https://velog.io/@sangyeon217/http-status-code)
+     - [REST API 관점에서 바라보는 HTTP 상태 코드(HTTP status code)](https://sanghaklee.tistory.com/61)
+     - [이러쿵저러쿵 :: HTTP 서버 응답 코드 (Response Code) 정리](https://ooz.co.kr/260)
+     - [서버의 상태를 알려주는 HTTP 상태 코드](https://evan-moon.github.io/2020/03/15/about-http-status-code/)
 
 ---
 

@@ -6,6 +6,7 @@ import com.example.drg.dto.GenFile;
 import com.example.drg.exception.DownloadFileFailException;
 import com.example.drg.service.DerivedRequestService;
 import com.example.drg.service.GenFileService;
+import com.example.drg.util.Util;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
@@ -14,18 +15,13 @@ import org.apache.tika.Tika;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -36,32 +32,17 @@ public class UserImgController {
     private final DerivedRequestService derivedRequestService;
     private final GenFileService fileService;
 
-    @ExceptionHandler(DownloadFileFailException.class)
-    public ResponseEntity<Object> responseEntityToOther(DownloadFileFailException e, HttpServletRequest request, WebRequest webRequest) {
-        URI redirectUri = null;
-        String failText = request.getParameter("failText");
-        if (failText == null) {
-            failText = "No Image Available";
-        }
-        try {
-            redirectUri = new URI("https://via.placeholder.com/300x300?text=" + URLEncoder.encode(failText, StandardCharsets.UTF_8.toString()));
-        } catch (URISyntaxException | UnsupportedEncodingException ex) {
-            log.info(ex.getMessage());
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(redirectUri);
-
-        return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);
-    }
-
     /* 요청에 알맞는 이미지 파생 후 결과를 보여준다 */
     @GetMapping("/img")
     @ApiOperation(value = "이미지 변환", notes = "URL에 해당하는 이미지를 입력한 크기로 변환된 이미지로 제공합니다.")
-    public ResponseEntity<Resource> showImg(@ApiParam(hidden = true) @RequestUrl String requestUrl,
+    public ResponseEntity showImg(@ApiParam(hidden = true) @RequestUrl String requestUrl,
                                             @ApiParam(value = "이미지 URL") @RequestParam("url") String originUrl,
                                             @ApiParam(value = "원하는 출력 너비") @RequestParam(defaultValue = "0", required = false) int width,
                                             @ApiParam(value = "원하는 출력 높이") @RequestParam(defaultValue = "0", required = false) int height,
-                                            @ApiParam(value = "원하는 출력 최대너비") @RequestParam(defaultValue = "0", required = false) int maxWidth) {
+                                            @ApiParam(value = "원하는 출력 최대너비") @RequestParam(defaultValue = "0", required = false) int maxWidth,
+                                            @RequestParam(defaultValue = "No Image", required = false) String failText,
+                                            @RequestParam(defaultValue = "300", required = false) int failWidth,
+                                            @RequestParam(defaultValue = "300", required = false) int failHeight) {
 
         // 현재 요청(requestUrl)과 동일한 기존 요청이 있었는지 조회
         DerivedRequest existing = derivedRequestService.findDerivedRequestByRequestUrl(requestUrl);
@@ -69,7 +50,12 @@ public class UserImgController {
         if (existing == null) {
 
             // 현재 요청 저장
-            int newDerivedRequestId = derivedRequestService.save(requestUrl, originUrl, width, height, maxWidth);
+            int newDerivedRequestId = 0;
+            try {
+                newDerivedRequestId= derivedRequestService.save(requestUrl, originUrl, width, height, maxWidth);
+            } catch (DownloadFileFailException e) {
+                return redirectFallback("https://via.placeholder.com/" + failWidth + "x" + failHeight + "?text=" + Util.getUriEncodedAsUTF8(failText));
+            }
 
             // 재조회
             DerivedRequest newDerivedRequest = derivedRequestService.getDerivedRequestById(newDerivedRequestId);
@@ -131,4 +117,24 @@ public class UserImgController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(resource);
     }
+
+    public ResponseEntity<Object> redirectFallback(String url) {
+
+        URI redirectUri = null;
+
+        try {
+            redirectUri = new URI(url);
+        } catch (URISyntaxException e) {
+            log.info(e.getMessage());
+            return null;
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(redirectUri);
+
+        //return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER); //303 (캐시 회피)
+	    //return new ResponseEntity<>(headers, HttpStatus.FOUND); //302 (기본적으로 캐시)
+	    return new ResponseEntity<>(headers, HttpStatus.MOVED_PERMANENTLY); //301 (기본적으로 캐시)
+    }
+
 }

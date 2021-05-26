@@ -1,5 +1,6 @@
 package com.example.drg.util;
 
+import com.example.drg.exception.DownloadFileFailException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
 import org.springframework.core.io.ClassPathResource;
@@ -10,13 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
@@ -345,7 +345,7 @@ public class Util {
 	/*
 		Downloader for use : Using Java NIO
 	 */
-	public static String downloadFileByHttp(String fileUrl, String outputDir) throws FileNotFoundException {
+	public static String downloadFileByHttp(String fileUrl, String outputDir) {
 		String originFileName = getFileNameFromUrl(fileUrl);
 		String fileExt = getFileExtFromFileName(originFileName);
 
@@ -366,7 +366,7 @@ public class Util {
 
 			fileChannel.close(); // 자원 해제
 		} catch (FileNotFoundException e) {
-			throw e;
+			throw new DownloadFileFailException();
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
@@ -384,6 +384,25 @@ public class Util {
 		}
 
 		return filePath;
+	}
+
+	/* 지정 포맷으로 문자열 인코딩 */
+	public static String getUriEncodedByCharset(String str, String charset) {
+		try {
+			return URLEncoder.encode(str, charset);
+		} catch (UnsupportedEncodingException e) {
+			return str;
+		}
+	}
+
+	/* 지정 포맷으로 문자열 인코딩 */
+	public static String getUriEncodedByCharset(String str, Charset charset) {
+		return getUriEncodedByCharset(str, charset.toString());
+	}
+
+	/* UTF-8 문자열 인코딩 */
+	public static String getUriEncodedAsUTF8(String str) {
+		return getUriEncodedByCharset(str, StandardCharsets.UTF_8);
 	}
 
 	// 존재하는 특정 파일의 미디어 타입을 분석해 확장자를 추출, Tika 활용
