@@ -365,7 +365,9 @@ public class Util {
 			fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 
 			fileChannel.close(); // 자원 해제
-		} catch (FileNotFoundException e) {
+		} catch (FileNotFoundException | MalformedURLException | UnknownHostException | ConnectException e) {
+			log.debug("Message : " + e.getMessage());
+			log.debug("Exception : " + e.getClass());
 			throw new DownloadFileFailException();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -381,6 +383,12 @@ public class Util {
 			String newFilePath = filePath.replaceAll("\\.tmp", "\\." + newFileExt);
 			moveFile(filePath, newFilePath);
 			filePath = newFilePath;
+		}
+
+		// img, video, audio 와 같은 미디어 파일이 아닐 경우
+		String fileExtTypeCode = getFileExtTypeCodeFromFileName(filePath);
+		if (fileExtTypeCode.equals("etc")) {
+			throw new DownloadFileFailException();
 		}
 
 		return filePath;
