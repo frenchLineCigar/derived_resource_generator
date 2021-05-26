@@ -4,11 +4,14 @@ import com.example.drg.app.App;
 import com.example.drg.dao.DerivedRequestDao;
 import com.example.drg.dto.DerivedRequest;
 import com.example.drg.dto.GenFile;
+import com.example.drg.exception.DownloadFileFailException;
 import com.example.drg.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.FileNotFoundException;
 
 @Slf4j
 @Service
@@ -51,7 +54,12 @@ public class DerivedRequestService {
 		if (derivedRequest.isOriginStatus()) {
 
 			// URL로 부터 원본 파일을 다운로드 후 경로를 담는다
-			String downloadedFilePath = Util.downloadFileByHttp(originUrl, App.getTmpDirPath());
+			String downloadedFilePath = null;
+			try {
+				downloadedFilePath = Util.downloadFileByHttp(originUrl, App.getTmpDirPath());
+			} catch (FileNotFoundException e) {
+				throw new DownloadFileFailException();
+			}
 
 			// 경로에서 파일명 추출
 			String originFileName = Util.getFileNameFromUrl(originUrl);

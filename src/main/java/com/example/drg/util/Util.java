@@ -345,7 +345,7 @@ public class Util {
 	/*
 		Downloader for use : Using Java NIO
 	 */
-	public static String downloadFileByHttp(String fileUrl, String outputDir) {
+	public static String downloadFileByHttp(String fileUrl, String outputDir) throws FileNotFoundException {
 		String originFileName = getFileNameFromUrl(fileUrl);
 		String fileExt = getFileExtFromFileName(originFileName);
 
@@ -365,6 +365,8 @@ public class Util {
 			fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
 
 			fileChannel.close(); // 자원 해제
+		} catch (FileNotFoundException e) {
+			throw e;
 		} catch (IOException e) {
 			e.printStackTrace();
 			return "";
