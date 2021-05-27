@@ -1,24 +1,57 @@
-server:
-  port: 8022
 spring:
+  profiles:
+    active: local
+  servlet:
+    multipart:
+      location: C:/temp
+      max-file-size: 100MB
+      max-request-size: 100MB
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: jdbc:log4jdbc:mysql://127.0.0.1:3308/derived_resources?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
-    #driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql://127.0.0.1:3308/derived_resources?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull
     username: drg
     password: 123456A@
 mybatis:
   type-aliases-package: com.example.drg.dto
-  #mapper-locations:
-  #- classpath:mybatis/mapper/*.xml
+server:
+  error:
+    include-exception: true
+    include-stacktrace: always
+    include-message: always
+    include-binding-errors: always
 logging:
   config: classpath:logback-spring.xml
-  #level:
-    #com.example.drg.dao: debug
+#  level:
+#    com.example.drg.dao: debug
 custom:
-  genFileDirPath: /2021/derived_resource_generator-file
-  tmpDirPath: ${custom.genFileDirPath}/tmp
+  genFileDirPath: C:/2021/derived_resource_generator-file
+  tmpDirPath: C:/temp
   logging:
     dir: log
+    level: debug
+
+---
+
+spring:
+  profiles: local
+server:
+  port: 8085
+
+---
+
+spring:
+  profiles: production
+  servlet:
+    multipart:
+      location: /tmp
+  datasource:
+    username: drg
+    password: 123456A@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/derived_resources?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeBehavior=convertToNull
+custom:
+  genFileDirPath: /opt/tomcat/latest/derived-resources.ml-file
+  tmpDirPath: /tmp
+  logging:
+    dir: /tmp/derived-resources-log
     level: info

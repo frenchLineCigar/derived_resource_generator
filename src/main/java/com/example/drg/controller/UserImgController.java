@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tika.Tika;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
@@ -29,6 +30,9 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class UserImgController {
 
+    @Value("${spring.profiles.active:Unknown}")
+    private String activeProfile;
+
     private final DerivedRequestService derivedRequestService;
     private final GenFileService fileService;
 
@@ -42,7 +46,16 @@ public class UserImgController {
                                             @ApiParam(value = "원하는 출력 최대너비") @RequestParam(defaultValue = "0", required = false) int maxWidth,
                                             @RequestParam(defaultValue = "No Image", required = false) String failText,
                                             @RequestParam(defaultValue = "300", required = false) int failWidth,
-                                            @RequestParam(defaultValue = "300", required = false) int failHeight) {
+                                            @RequestParam(defaultValue = "300", required = false) int failHeight,
+                                            @RequestParam(defaultValue = "FFFFFF", required = false) String failTextColor,
+                                            @RequestParam(defaultValue = "000000", required = false) String failBgColor) {
+
+        // 서비스 운영 모드일 때, url에 localhost 포함되면 무조건 fail
+        if (activeProfile.equals("production") && requestUrl.contains("://localhost")) {
+            log.debug("activeProfile : " + activeProfile);
+
+            return showFallbackImg(failWidth, failHeight, failText, failTextColor, failBgColor);
+        }
 
         // 현재 요청(requestUrl)과 동일한 기존 요청이 있었는지 조회
         DerivedRequest existing = derivedRequestService.findDerivedRequestByRequestUrl(requestUrl);
@@ -54,7 +67,8 @@ public class UserImgController {
             try {
                 newDerivedRequestId= derivedRequestService.save(requestUrl, originUrl, width, height, maxWidth);
             } catch (DownloadFileFailException e) {
-                return redirectFallback("https://via.placeholder.com/" + failWidth + "x" + failHeight + "?text=" + Util.getUriEncodedAsUTF8(failText));
+                log.debug("msg : " + e.getMessage() + ", cause : " + e.getCause());
+                return showFallbackImg(failWidth, failHeight, failText, failTextColor, failBgColor);
             }
 
             // 재조회
@@ -118,7 +132,11 @@ public class UserImgController {
                 .body(resource);
     }
 
-    public ResponseEntity<Object> redirectFallback(String url) {
+    public ResponseEntity<Object> showFallbackImg(int failWidth, int failHeight, String failText, String failTextColor, String failBgColor) {
+
+        final String urlPrefix = "https://via.placeholder.com/";
+        final String url = urlPrefix + failWidth + "x" + failHeight + "/" + failBgColor + "/" + failTextColor + "?text=" + Util.getUriEncodedAsUTF8(failText);
+        log.debug("url : {}", url);
 
         URI redirectUri = null;
 

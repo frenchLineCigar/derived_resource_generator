@@ -82,16 +82,6 @@
         </rollingPolicy>
     </appender>
 
-    <!-- for TEST -->
-    <appender name="TEST" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>
-                %clr(%msg%n%wEx){blue}
-            </pattern>
-            <charset>${CONSOLE_LOG_CHARSET}</charset>
-        </encoder>
-    </appender>
-
     <!-- root 로거 레벨 설정 -->
     <root level="${LOG_LEVEL}">
         <appender-ref ref="CONSOLE" />
@@ -121,14 +111,24 @@
     <logger name="jdbc.resultsettable" level="DEBUG" />
     <logger name="jdbc.connection" level="OFF" />
 
-    <!-- 간편 테스트용 -->
-    <logger name="com.example.drg" level="DEBUG" additivity="false">
-        <appender-ref ref="TEST" />
-    </logger>
+    <!-- for TEST -->
+<!--    <appender name="TEST" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        <encoder>-->
+<!--            <pattern>-->
+<!--                %clr(%msg%n%wEx){blue}-->
+<!--            </pattern>-->
+<!--            <charset>${CONSOLE_LOG_CHARSET}</charset>-->
+<!--        </encoder>-->
+<!--    </appender>-->
 
-    <logger name="com.example.drg.dao" level="OFF" additivity="false">
-        <appender-ref ref="TEST" />
-    </logger>
+    <!-- 간편 테스트용 -->
+<!--    <logger name="com.example.drg" level="DEBUG" additivity="false">-->
+<!--        <appender-ref ref="TEST" />-->
+<!--    </logger>-->
+
+<!--    <logger name="com.example.drg.dao" level="OFF" additivity="false">-->
+<!--        <appender-ref ref="TEST" />-->
+<!--    </logger>-->
 
 </configuration>
 

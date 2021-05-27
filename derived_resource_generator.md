@@ -2,9 +2,24 @@
 
 [2021-05-27]
 
+ -  [Spring] spring boot current profile
+   - **[Spring 의 Profiles - Sungho's Blog](https://sgc109.github.io/2020/07/06/spring-profiles/)**
+   - [How do you get current active/default Environment profile programmatically in Spring? - Stack Overflow](https://stackoverflow.com/questions/9267799/how-do-you-get-current-active-default-environment-profile-programmatically-in-sp)
+   - [How to determine programmatically the current active profile using Spring boot](https://www.edureka.co/community/69922/determine-programmatically-current-active-profile-spring)
+   - [Spring Profiles](https://www.baeldung.com/spring-profiles)
+   - [Properties with Spring and Spring Boot](https://www.baeldung.com/properties-with-spring)
+   - [Spring boot get active profile - Java Developer Zone](https://javadeveloperzone.com/spring-boot/spring-boot-get-active-profile/)
+   - [[Spring Boot] Profile 설정](https://better-dev.netlify.app/java/2019/03/11/spring_10/)
+   - [코딩하는 오징어 :: Spring boot profile 적용하기](https://effectivesquid.tistory.com/entry/Spring-boot-profile-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0)
+   - [[Spring]Spring boot + Spring Profile을 이용한 환경 별 자원 이용](https://ratseno.tistory.com/67)
+   - [spring profile 을 사용하여 환경에 맞게 deploy 하기](https://www.lesstif.com/java/spring-profile-deploy-18220309.html)
+   
+
+
  - [Tomcat/Servlet Container] 쿼리 스트링 특수문자 완화 : The valid characters are defined in RFC 7230 and RFC 3986
    - [[ERROR] Invalid character found in the request target. The valid characters are defined in RFC 7230 and RFC 3986 · 기억하기 위한 개발노트](http://jmlim.github.io/java/2019/10/14/characters-are-defined-in-rfc-7230-and-rfc-3986/)
    - [[Tomcat] java.lang.IllegalArgumentException: Invalid character found in the request target. The valid characters are defined in RFC 7230 and RFC 3986 - 따시! 먹고 살겠다고..](https://ddasi-live.tistory.com/17)
+
 
  - [HTTP] 리다이렉트 시 301, 302, 303 Status Code / SEO 영향
    - 301 vs 302 : 기본적으로 클라이언트 캐시 탐

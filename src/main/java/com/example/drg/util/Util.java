@@ -363,21 +363,27 @@ public class Util {
 			ReadableByteChannel readableByteChannel = Channels.newChannel(new URL(fileUrl).openStream());
 			FileChannel fileChannel = fileOutputStream.getChannel();
 			fileChannel.transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-
 			fileChannel.close(); // 자원 해제
-		} catch (FileNotFoundException | MalformedURLException | UnknownHostException | ConnectException e) {
-			log.debug("Message : " + e.getMessage());
-			log.debug("Exception : " + e.getClass());
-			throw new DownloadFileFailException();
 		} catch (IOException e) {
-			e.printStackTrace();
-			return "";
+			// FileNotFoundException, MalformedURLException, UnknownHostException, ConnectException => DownloadFileFailException
+			log.debug(e.toString());
+			throw new DownloadFileFailException("다운로드 할 수 없습니다.", e);
+		}
+
+		// 파일의 크기가 0일 경우
+		File file = new File(filePath);
+		if (file.length() == 0) {
+			throw new DownloadFileFailException("크기가 0인 파일입니다.");
 		}
 
 		// 파일 확장자가 tmp 로 처리된 경우, 파일의 메타데이터를 분석해 적절한 확장자로 처리
 		if (fileExt.equals("tmp")) {
-			// 생성된 tmp 파일의 확장자 추출
+			// 생성된 tmp 파일의 확장자 추론
 			String newFileExt = getFileExt(new File(filePath));
+
+			if (newFileExt == null || newFileExt.length() == 0){
+				throw new DownloadFileFailException("알 수 없는 형식의 파일입니다.");
+			}
 
 			// 확장자 변경
 			String newFilePath = filePath.replaceAll("\\.tmp", "\\." + newFileExt);
@@ -388,7 +394,7 @@ public class Util {
 		// img, video, audio 와 같은 미디어 파일이 아닐 경우
 		String fileExtTypeCode = getFileExtTypeCodeFromFileName(filePath);
 		if (fileExtTypeCode.equals("etc")) {
-			throw new DownloadFileFailException();
+			throw new DownloadFileFailException("미디어 파일이 아닙니다.");
 		}
 
 		return filePath;
@@ -421,6 +427,7 @@ public class Util {
 			mimeType = tika.detect(file);
 		} catch (IOException e) {
 			e.printStackTrace();
+			return "";
 		}
 
 		String ext = mimeType.split("/")[1]; // 확장자에 해당하는 subtype 부분 추출
