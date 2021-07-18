@@ -7,6 +7,8 @@
 > - [이미지(100x700) 노출 시 차이 비교](https://to2.kr/cBv)
 > - [이미지가 존재하지 않을 경우 차이 비교](https://to2.kr/cBy)
 
+## TIL / 작업일지
+- [drg2021.md](https://github.com/frenchLineCigar/drg2021/blob/master/derived_resource_generator.md)
 
 ## 사용법
 
